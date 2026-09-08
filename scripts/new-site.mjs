@@ -96,22 +96,43 @@ await fs.writeFile(sitePath, site, 'utf8');
 
 /* ---- content ------------------------------------------------------------- */
 
-// Emptied rather than rewritten. A collection is a list of a school's own
-// facts, and inheriting six facilities from a school 300km away is worse than
-// inheriting none: an empty grid is obviously unfinished, a wrong one is not.
+/*
+ * A collection is a list of a school's own facts, and inheriting six
+ * facilities from a school 300km away is worse than inheriting none: an empty
+ * grid is obviously unfinished, a wrong one is not.
+ *
+ * But that only applies to a REAL school's content. A copy made from the
+ * template holds the template's own TODO placeholders, which are not facts
+ * about anybody and are the most useful thing in the directory: they show the
+ * shape, the frontmatter fields and the icon names. Deleting those emptied
+ * every collection, which made Astro warn on every page of every fresh build
+ * and left the next person with no example to copy.
+ *
+ * So the test is what the file claims, not where it sits. A file carrying a
+ * placeholder marker is scaffolding and stays; anything else is some other
+ * school's fact and goes.
+ */
 const collections = ['news', 'programmes', 'facilities', 'values', 'directions'];
+const PLACEHOLDER = /TODO/;
 let removed = 0;
+let kept = 0;
 for (const c of collections) {
   const dir = path.join('src/content', c);
   for (const f of await fs.readdir(dir)) {
-    await fs.unlink(path.join(dir, f));
-    removed++;
+    const file = path.join(dir, f);
+    if (f === '.gitkeep') continue;
+    const body = await fs.readFile(file, 'utf8');
+    if (PLACEHOLDER.test(body)) {
+      kept++;
+    } else {
+      await fs.unlink(file);
+      removed++;
+    }
   }
-  await fs.writeFile(
-    path.join(dir, '.gitkeep'),
-    '',
-    'utf8',
-  );
+  // Only needed where everything was somebody else's and the directory is now
+  // empty. Astro cannot load a collection that has no files at all.
+  const left = (await fs.readdir(dir)).filter((f) => f !== '.gitkeep');
+  if (left.length === 0) await fs.writeFile(path.join(dir, '.gitkeep'), '', 'utf8');
 }
 
 /* ---- what is left of the previous school -------------------------------- */
@@ -160,7 +181,7 @@ console.log(`
   ${name} scaffolded.
 
     identity     src/config/site.ts        (search for TODO)
-    content      src/content/*             ${removed} files from the previous school removed
+    content      src/content/*             ${kept} placeholders kept, ${removed} removed
     role         templateRole: "client"    src/system is now guarded
 
 ${stale.length ? `  Still mentioning ${previous.name}, in prose this script cannot write:
