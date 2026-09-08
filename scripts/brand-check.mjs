@@ -15,7 +15,7 @@ import fs from 'node:fs/promises';
 import { parseColor, hex, contrast } from './lib/color.mjs';
 import { contrastPairs } from './lib/palette.mjs';
 
-const css = await fs.readFile('src/system/styles/generated/brand.css', 'utf8');
+const css = await fs.readFile('brand/palette.css', 'utf8');
 
 const tokens = {};
 for (const [, name, value] of css.matchAll(/--([a-z0-9-]+):\s*([^;]+);/g)) {
@@ -31,13 +31,13 @@ const required = [
 ];
 const missing = required.filter((k) => !tokens[k]);
 if (missing.length) {
-  console.error(`\n  generated/brand.css is missing: ${missing.join(', ')}`);
+  console.error(`\n  brand/palette.css is missing: ${missing.join(', ')}`);
   console.error('  Run: npm run brand:init -- --logo brand/logo.png\n');
   process.exit(1);
 }
 
 let failed = 0;
-console.log('\n  Contrast audit of src/system/styles/generated/brand.css\n');
+console.log('\n  Contrast audit of brand/palette.css\n');
 tokens.white = { r: 255, g: 255, b: 255 };
 for (const [label, fg, bg, target] of contrastPairs(tokens)) {
   const ratio = contrast(fg, bg);

@@ -7,7 +7,7 @@
  *   npm run brand:init -- --logo brand/logo.png --dry-run
  *
  * Writes:
- *   src/system/styles/generated/brand.css   the palette the site reads
+ *   brand/palette.css                       the palette the site reads
  *   brand/.brand-report.json                what it decided and why
  *   brand/preview.html                      swatches, the contrast table,
  *                                           and the components rendered in it
@@ -118,9 +118,8 @@ if (dryRun) {
 
 /* ---- write --------------------------------------------------------------- */
 
-await fs.mkdir('src/system/styles/generated', { recursive: true });
 await fs.writeFile(
-  'src/system/styles/generated/brand.css',
+  'brand/palette.css',
   renderBrandCss({ tokens, preset, presetName, logoPath }),
   'utf8',
 );
@@ -235,7 +234,7 @@ await sharp(ogBg)
 
 console.log(`
   Written
-    src/system/styles/generated/brand.css
+    brand/palette.css
     brand/.brand-report.json
     brand/brand.config.json
     brand/fonts.json

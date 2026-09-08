@@ -1,7 +1,7 @@
 ---
 // The stylesheet chain, and it is an order not a set. Each layer may only
 // read from the one above it:
-//   generated/brand.css  what this school's colours and shapes ARE
+//   brand/palette.css    what this school's colours and shapes ARE
 //   tokens.css           what they MEAN (--brand, --shadow-card, --on-accent)
 //   reset.css            element defaults
 //   surfaces.css         the four grounds a section may sit on
@@ -12,7 +12,7 @@
 // is system code, identical across every site built from this template, and
 // the reason it can stay identical is that no layer below tokens.css is
 // allowed to contain a colour literal carrying brand identity.
-import '../system/styles/generated/brand.css';
+import '../../brand/palette.css';
 import '../system/styles/tokens.css';
 import '../system/styles/reset.css';
 import '../system/styles/surfaces.css';
@@ -26,7 +26,7 @@ import '../system/styles/blocks.css';
 import { site, addressLine, mapsUrl, tel, apexDomain, origin } from '../config/site';
 import { featureEnabled } from '../config/features';
 
-// The font families are declared in generated/brand.css and FETCHED here, and
+// The font families are declared in brand/palette.css and FETCHED here, and
 // the two used to be written out separately. A preset swap could then load
 // Fraunces and apply Sora. Both now come from brand/fonts.json, which
 // `npm run brand:init` writes alongside the palette.

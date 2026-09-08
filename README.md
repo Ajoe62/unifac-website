@@ -62,7 +62,7 @@ Everything is arranged so a new school edits four directories and nothing else.
 
 | Layer | Path | Per school? |
 |---|---|---|
-| Palette, type, shape | `brand/`, `src/system/styles/generated/` | **Yes**, generated |
+| Palette, type, shape | `brand/` (incl. generated `brand/palette.css`) | **Yes**, generated |
 | Identity, flags, integrations | `src/config/` | **Yes**, hand written |
 | Content | `src/content/` | **Yes**, Markdown |
 | Images, favicons | `public/`, `src/assets/` | **Yes** |
@@ -79,7 +79,7 @@ git cherry-pick <sha>
 ```
 
 `npm run check:system` enforces it in client repos, and CI runs it on every PR.
-The exemption is `src/system/styles/generated/`, which `brand:init` writes.
+There is no exemption: the generated palette lives in `brand/palette.css`, outside `src/system/` entirely, which is what makes the sync command below safe to run wholesale.
 
 If a client genuinely needs something under `src/system/`, it belongs upstream
 where every other school gets it too. That is the difference between eight
@@ -92,7 +92,7 @@ sites and eight forks.
 An order, not a set. Each layer may only read from the one above it.
 
 ```
-generated/brand.css   what THIS school's colours and shapes ARE
+brand/palette.css     what THIS school's colours and shapes ARE
 tokens.css            what they MEAN   (--brand, --shadow-card, --on-accent)
 reset.css             element defaults
 surfaces.css          the four grounds a section may sit on
@@ -134,7 +134,7 @@ npm run brand:init -- --logo brand/logo.png --preset bold-editorial
 npm run brand:init -- --logo brand/logo.png --dry-run   # print, write nothing
 ```
 
-**Writes:** `src/system/styles/generated/brand.css`, `brand/fonts.json`,
+**Writes:** `brand/palette.css`, `brand/fonts.json`,
 `brand/preview.html`, `brand/.brand-report.json`, the favicon set and
 `public/og-image.png`.
 

@@ -1,5 +1,5 @@
 /**
- * Renders generated/brand.css.
+ * Renders brand/palette.css.
  *
  * The output has to stay readable, because a person opens it to check what the
  * extractor decided before they trust it. That is why the comments explaining
