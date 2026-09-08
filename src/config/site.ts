@@ -155,9 +155,9 @@ const SiteSchema = z.object({
 const config = {
   // TODO Every value in this block. `npm run check` fails while a TODO
   // survives into the build, so nothing here can reach production by accident.
-  name: 'TODO School Name',
-  shortName: 'TODO Name',
-  descriptor: 'TODO Descriptor',
+  name: 'Unifac',
+  shortName: 'Unifac',
+  descriptor: 'School',
 
   domain: 'www.example.com',
   locale: 'en',
@@ -165,30 +165,28 @@ const config = {
 
   logo: {
     src: '/logo.png',
-    alt: 'TODO School Name crest',
+    alt: 'Unifac crest',
   },
 
   address: {
-    street: 'TODO Street',
+    street: 'TODO: street address',
     landmark: '',
-    area: 'TODO Area',
+    area: 'TODO: area',
     district: '',
-    city: 'TODO City',
-    region: 'TODO Region',
+    city: 'City',
+    region: 'Region',
     country: 'Nigeria',
-    short: 'TODO Area, TODO City',
-    mapsQuery: 'TODO the string that actually resolves on Google Maps',
+    short: 'TODO: short address, one line',
+    mapsQuery: 'Unifac City',
   },
 
   phones: [{ display: '0800 000 0000', dial: '+2348000000000' }],
   email: 'hello@example.com',
-  officeHours: 'Monday to Friday, 8:00am to 4:00pm',
+  officeHours: 'Monday - Friday, 8:00am - 4:00pm',
 
-  defaultTitle: 'TODO School Name',
-  defaultDescription:
-    'TODO One sentence a search engine will show. Say where the school is and what it teaches.',
-  footerBlurb:
-    'TODO Two sentences beside the crest in the footer. The motto, the curriculum, the town.',
+  defaultTitle: 'Unifac - City',
+  defaultDescription: 'TODO: one sentence describing Unifac, for search results and link previews.',
+  footerBlurb: 'TODO: two sentences about Unifac, shown beside the crest in the footer.',
 
   copyrightYear: 2026,
 
