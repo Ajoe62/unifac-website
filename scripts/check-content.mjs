@@ -28,15 +28,26 @@ import fs from 'node:fs/promises';
 import path from 'node:path';
 
 const DIST = 'dist';
+const MARKER = 'TODO';
+
 /*
- * TODO is the marker the placeholder prose carries. `example.com` is the other
- * one, and it is here because new-site.mjs has to put SOMETHING in the domain
- * field: site.ts validates it as a hostname, so it cannot be the word TODO.
- * That left a real, schema-valid, entirely wrong value sitting in every
- * canonical link and every sitemap entry, passing this gate silently. A
- * default that validates is more dangerous than one that does not.
+ * The domain gets its own check rather than a second string marker.
+ *
+ * new-site.mjs has to put SOMETHING in the domain field, and site.ts validates
+ * it as a hostname, so it cannot be the word TODO. That leaves example.com in
+ * every canonical link and sitemap entry of a fresh site: schema-valid,
+ * entirely wrong, and invisible to a TODO scan.
+ *
+ * Grepping the page for "example.com" was the obvious fix and the wrong one.
+ * It fired on a live site's contact form, where `placeholder="you@example.com"`
+ * is a correct hint to a parent typing their address, not a stale config
+ * value. A check that cries wolf on correct markup gets switched off.
+ *
+ * So look where the domain actually lands: the canonical link's host. That
+ * value comes from site.domain and from nowhere else, so it cannot be
+ * anything but the real answer or the placeholder.
  */
-const MARKERS = ['TODO', 'example.com'];
+const PLACEHOLDER_HOSTS = ['example.com', 'example.org', 'example.net'];
 
 const pkg = JSON.parse(await fs.readFile('package.json', 'utf8'));
 const role = pkg.templateRole ?? 'template';
@@ -73,23 +84,46 @@ try {
  * should stop a deploy, and building first is what tells them apart.
  */
 const found = [];
+const badDomain = [];
 for (const file of pages) {
   const html = await fs.readFile(file, 'utf8');
   const page = '/' + path.relative(DIST, file).replace(/\\/g, '/');
-  const hits = MARKERS.reduce((n, m) => n + html.split(m).length - 1, 0);
+  const hits = html.split(MARKER).length - 1;
+
+  const canonical = html.match(/<link rel="canonical" href="([^"]*)"/);
+  if (canonical) {
+    try {
+      const host = new URL(canonical[1]).hostname;
+      if (PLACEHOLDER_HOSTS.some((h) => host === h || host.endsWith(`.${h}`))) {
+        badDomain.push({ page, host });
+      }
+    } catch {
+      // A canonical that will not parse is check:meta's problem, not this one.
+    }
+  }
+
   if (!hits) continue;
 
   // The first line of context, so the report says WHICH sentence is unwritten
   // rather than only how many are.
-  const at = Math.min(
-    ...MARKERS.map((m) => html.indexOf(m)).filter((i) => i >= 0),
-  );
+  const at = html.indexOf(MARKER);
   const sample = html
     .slice(Math.max(0, at - 40), at + 90)
     .replace(/<[^>]*>/g, ' ')
     .replace(/\s+/g, ' ')
     .trim();
   found.push({ page, hits, sample });
+}
+
+// Reported separately, because they are separate jobs. One is "nobody has
+// written this paragraph yet"; the other is "this site is published under
+// somebody's example domain", which is one field and one minute.
+if (badDomain.length) {
+  console.error(
+    `\n  ${badDomain.length} page(s) publish the placeholder domain ${badDomain[0].host}.` +
+      `\n  It reaches every canonical link and every sitemap entry.` +
+      `\n  Set the domain field in src/config/site.ts.\n`,
+  );
 }
 
 if (found.length) {
@@ -105,7 +139,8 @@ if (found.length) {
     '\n  Each one is a sentence somebody still has to write. Sources: ' +
       'src/config/site.ts, src/content/*, src/pages/*.\n',
   );
-  process.exit(1);
 }
+
+if (found.length || badDomain.length) process.exit(1);
 
 console.log(`\n  No placeholder copy left in ${pages.length} built pages.\n`);
