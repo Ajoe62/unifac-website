@@ -28,7 +28,15 @@ import fs from 'node:fs/promises';
 import path from 'node:path';
 
 const DIST = 'dist';
-const MARKER = 'TODO';
+/*
+ * TODO is the marker the placeholder prose carries. `example.com` is the other
+ * one, and it is here because new-site.mjs has to put SOMETHING in the domain
+ * field: site.ts validates it as a hostname, so it cannot be the word TODO.
+ * That left a real, schema-valid, entirely wrong value sitting in every
+ * canonical link and every sitemap entry, passing this gate silently. A
+ * default that validates is more dangerous than one that does not.
+ */
+const MARKERS = ['TODO', 'example.com'];
 
 const pkg = JSON.parse(await fs.readFile('package.json', 'utf8'));
 const role = pkg.templateRole ?? 'template';
@@ -68,13 +76,16 @@ const found = [];
 for (const file of pages) {
   const html = await fs.readFile(file, 'utf8');
   const page = '/' + path.relative(DIST, file).replace(/\\/g, '/');
-  const hits = html.split(MARKER).length - 1;
+  const hits = MARKERS.reduce((n, m) => n + html.split(m).length - 1, 0);
   if (!hits) continue;
 
   // The first line of context, so the report says WHICH sentence is unwritten
   // rather than only how many are.
+  const at = Math.min(
+    ...MARKERS.map((m) => html.indexOf(m)).filter((i) => i >= 0),
+  );
   const sample = html
-    .slice(Math.max(0, html.indexOf(MARKER) - 40), html.indexOf(MARKER) + 90)
+    .slice(Math.max(0, at - 40), at + 90)
     .replace(/<[^>]*>/g, ' ')
     .replace(/\s+/g, ' ')
     .trim();
