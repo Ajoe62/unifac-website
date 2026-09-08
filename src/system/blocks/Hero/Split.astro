@@ -1,0 +1,34 @@
+---
+/**
+ * The original home page hero: headline on the left, crest in a ring on the
+ * right. Unused by the first site built from this template once the carousel
+ * landed, and kept as a first
+ * class variant because a school with two usable photographs cannot run a
+ * five slide carousel, and this is the layout that needs none.
+ */
+import { site } from '../../../config/site';
+import type { Action } from '../types';
+import Actions from '../Actions.astro';
+
+interface Props {
+  headline: string;
+  lead?: string;
+  motto?: string;
+  actions?: Action[];
+}
+
+const { headline, lead, motto, actions = [] } = Astro.props;
+---
+<section class="hero">
+  <div class="wrap">
+    <div>
+      <h1 set:html={headline} />
+      {lead && <p class="lead">{lead}</p>}
+      {actions.length > 0 && <Actions actions={actions} large />}
+      {motto && <p class="motto"><span></span>{motto}</p>}
+    </div>
+    <div class="crest-card">
+      <div class="crest-ring"><img src={site.logo.src} alt={site.logo.alt} /></div>
+    </div>
+  </div>
+</section>

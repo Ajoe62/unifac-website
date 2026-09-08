@@ -1,0 +1,45 @@
+---
+import { getCollection, render } from 'astro:content';
+import Icon from '../../components/Icon.astro';
+import type { Surface } from '../types';
+
+interface Props {
+  eyebrow?: string;
+  title?: string;
+  intro?: string;
+  surface?: Surface;
+  id?: string;
+}
+
+const {
+  eyebrow = 'Finding Us',
+  title = 'How to find the school.',
+  intro = 'We are in the Obaretin community, close to Rubber Research Junction. Street names are little help out here, so here are the two routes our families actually use.',
+  surface = 'base',
+  id = 'directions',
+} = Astro.props;
+
+// The one collection whose body is Markdown rather than a frontmatter line.
+// These directions carry emphasis on the landmark names, and the emphasis is
+// not decoration: it is what a driver scans for. Frontmatter cannot hold it.
+const routes = (await getCollection('directions')).sort(
+  (a, b) => a.data.order - b.data.order,
+);
+const rendered = await Promise.all(
+  routes.map(async (route) => ({ ...route, Body: (await render(route)).Content })),
+);
+---
+<section id={id} class={surface !== 'base' ? `surface-${surface}` : undefined}>
+  <div class="wrap">
+    <div class="sec-head"><p class="eyebrow">{eyebrow}</p><h2>{title}</h2><p>{intro}</p></div>
+    <div class="feat-grid two">
+      {rendered.map(({ data, Body }) => (
+        <div class="feat">
+          <div class="ic"><Icon name={data.icon} /></div>
+          <h3>{data.title}</h3>
+          <Body />
+        </div>
+      ))}
+    </div>
+  </div>
+</section>

@@ -1,0 +1,244 @@
+---
+import { features } from '../../config/features';
+
+// GATED ROUTE. A rest parameter that generates exactly one path, or none.
+//
+// This file used to be src/pages/portal.astro. A page sitting in src/pages/ is routed
+// whether or not the school has the feature, so turning `portal` off removed
+// every link to this page and left the page itself reachable by anyone with
+// the URL. A school that does not run a portal would have shipped one.
+//
+// Returning [] from getStaticPaths emits nothing. Returning a single undefined
+// path emits the parent route, which is the same URL this page always had.
+export function getStaticPaths() {
+  return features.portal ? [{ params: { path: undefined } }] : [];
+}
+
+import Icon from '../../system/components/Icon.astro';
+import Layout from '../../layouts/Layout.astro';
+import { site } from '../../config/site';
+import { portalHref, portalLive } from '../../config/integrations';
+
+/**
+ * The chooser. Three doors, and nothing else on the page.
+ *
+ * This is where the "Portal" link in the header and the utility bar both land,
+ * and it exists to do one thing: let somebody say who they are before anything
+ * asks them for a credential. Previously the header sent students and staff
+ * straight out to two different applications, so the first screen either of
+ * them saw after leaving the school's own site was somebody else's product, with somebody
+ * else's logo on it, asking for a password.
+ *
+ * Students and staff each go on to a school-branded sub-page, because both
+ * groups have more than one destination, and choosing between two named cards
+ * under our own crest is a different experience from being dropped at a
+ * sign-in form. Administrators have exactly one destination, so their door
+ * goes straight there rather than through a page holding a single card.
+ */
+
+// Both student destinations run through their own live flag. If the two ever
+// go dark together the students door has nothing behind it, and saying so here
+// is better than sending a parent to a page of "opening soon" cards.
+const studentsReady = portalLive;
+const adminHref = portalHref('admin');
+---
+<Layout
+  title={`Portal - ${site.name}`}
+  description="TODO One sentence for search results, about the school portal and who signs in."
+  active="portal"
+>
+
+<section class="page-hero portal-hero">
+  <div class="wrap">
+    <img class="portal-crest" src="/logo.jpg" alt="" width="76" height="76" />
+    <p class="eyebrow">{site.shortName} Portal</p>
+    <h1>Who is signing in?</h1>
+    <p>Choose your door. Everything behind it belongs to {site.shortName}: your lessons, your assessments, your results and your class records.</p>
+  </div>
+</section>
+
+<section class="doors-sec">
+  <div class="wrap">
+    <div class="doors">
+
+      <a class="door" href="/portal/students">
+        <span class="door-ic" aria-hidden="true">
+          <Icon name="mortarboard" size={30} />
+        </span>
+        <h2>Students</h2>
+        <p>Open your lessons, sit an assessment and check a result. You need the username and access code your class teacher gave you.</p>
+        <span class="door-go">{studentsReady ? 'Student door' : 'Opening soon'} <span class="arr">&rarr;</span></span>
+      </a>
+
+      <a class="door" href="/portal/staff">
+        <span class="door-ic" aria-hidden="true">
+          <Icon name="pencil" size={30} />
+        </span>
+        <h2>Staff</h2>
+        <p>Teachers and tutors. Publish a lesson, mark written answers, take attendance and enter your class marks. You sign in with your school email address, not an access code.</p>
+        <span class="door-go">Staff door <span class="arr">&rarr;</span></span>
+      </a>
+
+      <a class="door door--admin" href={adminHref ?? '/portal/staff'} rel={adminHref ? 'noopener' : undefined}>
+        <span class="door-ic" aria-hidden="true">
+          <Icon name="dashboard" size={30} />
+        </span>
+        <h2>Administrators</h2>
+        <p>The school dashboard. Manage the roster and class lists, build the term's exams, release results and issue access codes.</p>
+        <span class="door-go">Administrator door <span class="arr">&rarr;</span></span>
+        <span class="door-note">Opens ResultPeak, the school's assessment and results system.</span>
+      </a>
+
+    </div>
+  </div>
+</section>
+
+<section class="slim reassure">
+  <div class="wrap">
+    <div class="reassure-grid">
+      <div>
+        <h3>One set of details</h3>
+        <p>A student's username and access code work in both places behind the students door. There is nothing extra to set up at home and no second account to create.</p>
+      </div>
+      <div>
+        <h3>Issued by the school</h3>
+        <p>Access codes come from the class teacher on a printed sheet, never by text message. Lost one? The school office reissues it once we have confirmed who you are.</p>
+      </div>
+      <div>
+        <h3>Where you end up</h3>
+        <p>{site.shortName} runs its lessons and its assessments on two specialist systems, JDSmartLearn and ResultPeak. Every card names the one it opens before you click it.</p>
+      </div>
+    </div>
+    <div class="cta" style="margin-top:2.2rem">
+      <a class="btn btn-brand" href="/portal/help">Read the full sign-in guide <span class="arr">&rarr;</span></a>
+    </div>
+  </div>
+</section>
+
+<section class="band">
+  <div class="wrap">
+    <p class="eyebrow" style="color:var(--accent-300)">Need a hand?</p>
+    <h2>Lost a code? Ask the school.</h2>
+    <p>Access codes are issued and reset by the school office. For your child's safety we cannot send one over the phone without confirming who you are. Come in, or call and we will arrange it.</p>
+    <div class="cta">
+      <a class="btn btn-gold btn-lg" href="/contact">Contact the School <span class="arr">&rarr;</span></a>
+      <a class="btn btn-ghost btn-lg" href="/portal/help">Sign-in Guide</a>
+    </div>
+  </div>
+</section>
+
+</Layout>
+
+<style>
+  .portal-hero .wrap {
+    text-align: center;
+  }
+  .portal-hero p {
+    margin-inline: auto;
+  }
+  .portal-crest {
+    width: 76px;
+    height: 76px;
+    border-radius: 50%;
+    margin: 0 auto 1.1rem;
+    border: 2px solid var(--line-accent-crest);
+    box-shadow: var(--shadow-crest);
+  }
+
+  .doors-sec {
+    padding-top: 3.4rem;
+  }
+  .doors {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.4rem;
+  }
+  .door {
+    display: flex;
+    flex-direction: column;
+    background: var(--card);
+    border: var(--border-weight) solid var(--line);
+    border-radius: var(--radius-lg);
+    padding: 2.1rem 1.7rem 1.9rem;
+    transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+  }
+  .door:hover {
+    transform: translateY(-4px);
+    border-color: var(--line-accent-strong);
+    box-shadow: var(--shadow-card-strong);
+  }
+  .door-ic {
+    width: 58px;
+    height: 58px;
+    border-radius: var(--radius-card);
+    display: grid;
+    place-items: center;
+    color: var(--on-brand-strong);
+    background: var(--grad-brand-tile);
+    margin-bottom: 1.2rem;
+  }
+  .door--admin .door-ic {
+    background: var(--grad-feature-tile);
+  }
+  .door h2 {
+    font-size: 1.5rem;
+  }
+  .door p {
+    color: var(--muted);
+    margin: 0.6rem 0 0;
+    font-size: 0.98rem;
+  }
+  .door-go {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    margin-top: auto;
+    padding-top: 1.4rem;
+    font-weight: 800;
+    font-size: 0.92rem;
+    color: var(--brand);
+  }
+  .door--admin .door-go {
+    color: var(--feature);
+  }
+  .door .arr {
+    transition: transform 0.2s ease;
+  }
+  .door:hover .arr {
+    transform: translateX(4px);
+  }
+  .door-note {
+    font-size: 0.8rem;
+    color: var(--muted);
+    margin-top: 0.5rem;
+    line-height: 1.45;
+  }
+  @media (max-width: 900px) {
+    .doors {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .reassure {
+    background: var(--surface-2);
+  }
+  .reassure-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2rem;
+  }
+  .reassure-grid h3 {
+    font-size: 1.14rem;
+  }
+  .reassure-grid p {
+    color: var(--muted);
+    margin: 0.5rem 0 0;
+    font-size: 0.97rem;
+  }
+  @media (max-width: 820px) {
+    .reassure-grid {
+      grid-template-columns: 1fr;
+      gap: 1.6rem;
+    }
+  }
+</style>

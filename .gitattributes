@@ -1,0 +1,12 @@
+# Normalise line endings in the repository.
+#
+# This template is cloned onto whatever machine the next site is built on, and
+# without this a Windows checkout commits CRLF while a Linux one commits LF.
+# The result is a diff where every line of a file has changed and none of its
+# content has, which makes `git checkout template/master -- src/system/` (the
+# supported way to pull a fix down) unreadable.
+* text=auto eol=lf
+
+*.png binary
+*.jpg binary
+*.ico binary

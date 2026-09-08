@@ -1,0 +1,24 @@
+---
+/**
+ * The full width closing call to action. Sits on the feature surface, which
+ * is the one band on the site that is neither brand nor page colour, and is
+ * the reason it reads as an ending rather than another section.
+ */
+import type { Action } from '../types';
+import Actions from '../Actions.astro';
+
+interface Props {
+  eyebrow?: string;
+  title: string;
+  body?: string;
+  actions?: Action[];
+}
+
+const { eyebrow, title, body, actions = [] } = Astro.props;
+---
+<div class="wrap">
+  {eyebrow && <p class="eyebrow">{eyebrow}</p>}
+  <h2>{title}</h2>
+  {body && <p>{body}</p>}
+  {actions.length > 0 && <Actions actions={actions} large />}
+</div>

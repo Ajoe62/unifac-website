@@ -1,0 +1,159 @@
+---
+import { features } from '../../../config/features';
+
+// GATED ROUTE. A rest parameter that generates exactly one path, or none.
+//
+// This file used to be src/pages/portal/students.astro. A page sitting in src/pages/ is routed
+// whether or not the school has the feature, so turning `portal` off removed
+// every link to this page and left the page itself reachable by anyone with
+// the URL. A school that does not run a portal would have shipped one.
+//
+// Returning [] from getStaticPaths emits nothing. Returning a single undefined
+// path emits the parent route, which is the same URL this page always had.
+export function getStaticPaths() {
+  return features.portal ? [{ params: { path: undefined } }] : [];
+}
+
+import Icon from '../../../system/components/Icon.astro';
+import Layout from '../../../layouts/Layout.astro';
+import { site } from '../../../config/site';
+import PortalCard from '../../../system/blocks/Cards/PortalCard.astro';
+import { portalHref, portalLive } from '../../../config/integrations';
+
+/**
+ * The student door, reached from the chooser at /portal.
+ *
+ * A student has two live destinations that live in two different applications,
+ * so this page exists to make that one decision under the school's own
+ * crest, in the school's own wording, before anybody crosses over. Each card names
+ * the application behind it; see PortalCard's handoff line.
+ */
+const lessons = portalHref('lessons');
+const exam = portalHref('exam');
+const results = portalHref('results');
+---
+<Layout
+  title={`Student Portal - ${site.name}`}
+  description="TODO One sentence for search results, about the student portal."
+  active="portal"
+>
+
+<section class="page-hero">
+  <div class="wrap">
+    <p class="eyebrow"><a href="/portal" class="crumb">Portal</a> / Students</p>
+    <h1>Your work, in two places.</h1>
+    <p>Lessons and assessments run on two systems the school uses, and the same username and access code opens both. Keep the printed sheet from your class teacher somewhere safe.</p>
+  </div>
+</section>
+
+{!portalLive && (
+  <section class="slim notice-band">
+    <div class="wrap">
+      <p><strong>The student portal is being prepared.</strong> Your class teacher will tell you the day it opens. Nothing needs setting up at home before then.</p>
+    </div>
+  </section>
+)}
+
+<section>
+  <div class="wrap">
+    <div class="sec-head"><p class="eyebrow">Where do I go?</p><h2>Pick the one you need.</h2><p>The same two details work in every card here. There is no account to create and no password to choose.</p></div>
+    <div class="feat-grid">
+
+      <PortalCard
+        title="Open my lessons"
+        href={lessons}
+        app="lessons"
+        action="Go to lessons"
+        meta={`${site.shortName} already selected. Works offline once opened.`}
+      >
+        <Icon name="book-open" />
+        Lesson notes, summaries, practice questions and assignments your teachers publish. Once a lesson has loaded it stays readable with the data switched off, so it works on the way home.
+      </PortalCard>
+
+      <PortalCard
+        title="Sit an assessment"
+        href={exam}
+        app="exam"
+        action="Go to assessments"
+        meta={`${site.shortName} already selected. Needs a steady signal.`}
+      >
+        <Icon name="clipboard-check" />
+        Objective questions are marked the moment you submit. Written answers are marked with AI assistance and checked by your teacher before the score counts.
+      </PortalCard>
+
+      <PortalCard
+        title="Check a result"
+        href={results}
+        app="results"
+        action="Look up a result"
+        meta="Released term by term"
+      >
+        <Icon name="document" />
+        Term result sheets are prepared by the school and released after each term. Until online lookup opens, sheets are issued directly by the school office. See <a href="/portal/help#results">how results are issued</a>.
+      </PortalCard>
+
+    </div>
+  </div>
+</section>
+
+<section style="background:var(--surface-2)">
+  <div class="wrap">
+    <div class="sec-head"><p class="eyebrow">Signing In</p><h2>Three things, in order.</h2><p>Designed to work on a shared phone with a weak signal: no app to install, no email address required.</p></div>
+    <div class="steps">
+      <div class="step">
+        <h3>Get the sheet</h3>
+        <p>The class teacher issues a printed sheet listing each child's username and six-character access code. It comes from the school, never by text message.</p>
+      </div>
+      <div class="step">
+        <h3>Pick the right card</h3>
+        <p>Lessons and assessments are two different places, but they take the same two details. Choose from the cards above.</p>
+      </div>
+      <div class="step">
+        <h3>Type the two details</h3>
+        <p>Username like <code>jss3-04</code>, then the access code. {site.shortName} is already selected for you on both.</p>
+      </div>
+    </div>
+    <div class="cta" style="margin-top:2.4rem">
+      <a class="btn btn-brand" href="/portal/help">Read the full sign-in guide <span class="arr">&rarr;</span></a>
+      <a class="btn btn-outline" href="/portal">Back to the portal</a>
+    </div>
+  </div>
+</section>
+
+<section class="band">
+  <div class="wrap">
+    <p class="eyebrow" style="color:var(--accent-300)">Need a hand?</p>
+    <h2>Lost a code? Ask the school.</h2>
+    <p>Access codes are issued and reset by the school office. For your child's safety we cannot send one over the phone without confirming who you are. Come in, or call and we will arrange it.</p>
+    <div class="cta">
+      <a class="btn btn-gold btn-lg" href="/contact">Contact the School <span class="arr">&rarr;</span></a>
+      <a class="btn btn-ghost btn-lg" href="/portal/help">Sign-in Guide</a>
+    </div>
+  </div>
+</section>
+
+</Layout>
+
+<style>
+  .crumb {
+    color: var(--accent-300);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+  .notice-band {
+    background: var(--tint-accent);
+    border-bottom: 1px solid var(--line);
+  }
+  .notice-band p {
+    margin: 0;
+    color: var(--ink);
+    max-width: 78ch;
+  }
+  code {
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    background: var(--tint-brand);
+    border-radius: 5px;
+    padding: 0.1rem 0.35rem;
+    font-size: 0.94em;
+  }
+</style>

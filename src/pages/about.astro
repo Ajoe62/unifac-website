@@ -1,0 +1,91 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { site } from '../config/site';
+import { getCollection } from 'astro:content';
+import Icon from '../system/components/Icon.astro';
+import MediaText from '../system/blocks/Media/Text.astro';
+import Facilities from '../system/blocks/Feature/Grid.astro';
+import { Image } from 'astro:assets';
+import headPhoto from '../assets/images/head-of-school.jpg';
+import storyPhoto from '../assets/images/community.jpg';
+
+// The same three values the homepage shows, from the same files.
+const values = (await getCollection('values')).sort((a, b) => a.data.order - b.data.order);
+---
+<Layout
+  title={`About - ${site.name}`}
+  description="TODO One sentence for search results. Who the school is, where it is, and what it teaches."
+  active="about"
+>
+
+<section class="page-hero">
+  <div class="wrap">
+    <p class="eyebrow">About the School</p>
+    <h1>TODO The promise this school makes, in six words.</h1>
+    <p>TODO Two sentences under the headline. Where the school is, and what a parent should feel walking in.</p>
+  </div>
+</section>
+
+<section class="welcome">
+  <div class="wrap">
+    <div class="photo">
+      <Image src={headPhoto} alt="The Head of School" widths={[480, 768, 1100]} sizes="(max-width: 820px) 92vw, 46vw" format="webp" quality={76} loading="lazy" />
+    </div>
+    <div>
+      <p class="eyebrow">Welcome to {site.shortName}</p>
+      <h2>A warm word from the Head of School.</h2>
+      <blockquote>“TODO One or two sentences in the head teacher’s own voice. Not marketing copy: something they would actually say to a parent across a desk.”</blockquote>
+      <div class="signoff">The Head of School<small>{site.name}</small></div>
+    </div>
+  </div>
+</section>
+
+<MediaText
+  image={storyPhoto}
+  alt="Pupils celebrating together"
+  eyebrow="Our Story"
+  title="TODO The story behind the name, as a headline."
+  reverse={true}
+>
+  <p>TODO Why the school was founded, and by whom. One paragraph.</p>
+  <p>TODO Where the school is and which curriculum it teaches at each stage. Be specific: this is the paragraph parents read twice.</p>
+  <p>TODO What the school teaches beyond the syllabus.</p>
+  <div class="cta">
+    <a class="btn btn-brand" href="/admissions">Explore Admissions <span class="arr">→</span></a>
+    <a class="btn btn-outline" href="/contact">Arrange a Visit</a>
+  </div>
+</MediaText>
+
+<section class="values" style="background:var(--surface-2)">
+  <div class="wrap">
+    <div class="sec-head"><p class="eyebrow">Our Promise</p><h2>TODO A heading for the three values below.</h2><p>TODO One sentence introducing them. The values themselves live in src/content/values/.</p></div>
+    <div class="values-grid" style="display:grid;grid-template-columns:repeat(3,1fr);gap:1.4rem;margin-top:2.6rem">
+      {values.map((value) => (
+        <div class="vcard">
+          <div class="ic"><Icon name={value.data.icon} /></div>
+          <h3>{value.data.title}</h3>
+          <p>{value.data.summary}</p>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
+
+<Facilities
+  title="TODO A heading for the facilities below."
+  intro="TODO One sentence on what the campus gives pupils. The facilities themselves live in src/content/facilities/."
+/>
+
+<section class="band">
+  <div class="wrap">
+    <p class="eyebrow" style="color:var(--accent-300)">Admissions Open</p>
+    <h2>TODO A closing invitation.</h2>
+    <p>TODO Which session is open, which year groups, and how to arrange a visit.</p>
+    <div class="cta">
+      <a class="btn btn-gold btn-lg" href="/admissions">Start an Enquiry <span class="arr">→</span></a>
+      <a class="btn btn-ghost btn-lg" href="/contact">Contact the School</a>
+    </div>
+  </div>
+</section>
+
+</Layout>

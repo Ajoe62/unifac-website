@@ -1,0 +1,51 @@
+---
+/**
+ * News, as a three column grid of photo cards.
+ *
+ * `limit` is what lets the homepage show the latest three and /news show all
+ * of them from one collection. Two hand maintained lists is how the same
+ * photograph ended up with two different alt texts.
+ */
+import { Image } from 'astro:assets';
+import { getCollection } from 'astro:content';
+import Actions from '../Actions.astro';
+import type { Action } from '../types';
+
+interface Props {
+  limit?: number;
+  eyebrow?: string;
+  title?: string;
+  /** The "view all" link that sits opposite the heading. */
+  action?: Action;
+}
+
+const { limit, eyebrow, title, action } = Astro.props;
+const all = (await getCollection('news')).sort((a, b) => a.data.order - b.data.order);
+const posts = limit ? all.slice(0, limit) : all;
+const thumbSizes = '(max-width: 820px) 92vw, 30vw';
+---
+<div class="wrap">
+  {title && (
+    <div class="top">
+      <div class="sec-head">
+        {eyebrow && <p class="eyebrow">{eyebrow}</p>}
+        <h2>{title}</h2>
+      </div>
+      {action && <Actions actions={[action]} />}
+    </div>
+  )}
+  <div class="grid3">
+    {posts.map((post) => (
+      <article class="ncard">
+        <div class="thumb">
+          <Image src={post.data.cover} alt={post.data.coverAlt} widths={[400, 640, 900]} sizes={thumbSizes} format="webp" quality={72} loading="lazy" />
+        </div>
+        <div class="body">
+          <span class="tag">{post.data.tag}</span>
+          <h3>{post.data.title}</h3>
+          <p>{post.data.summary}</p>
+        </div>
+      </article>
+    ))}
+  </div>
+</div>

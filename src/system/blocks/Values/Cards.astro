@@ -1,0 +1,37 @@
+---
+/**
+ * The school's promises as a row of cards. Reads the `values` collection, so
+ * a school with four values adds a fourth Markdown file.
+ */
+import { getCollection } from 'astro:content';
+import Icon from '../../components/Icon.astro';
+
+interface Props {
+  eyebrow?: string;
+  title?: string;
+  intro?: string;
+  /** Extra styles on the grid, for pages that need their own column count. */
+  gridStyle?: string;
+}
+
+const { eyebrow, title, intro, gridStyle } = Astro.props;
+const values = (await getCollection('values')).sort((a, b) => a.data.order - b.data.order);
+---
+<div class="wrap">
+  {title && (
+    <div class="sec-head">
+      {eyebrow && <p class="eyebrow">{eyebrow}</p>}
+      <h2>{title}</h2>
+      {intro && <p>{intro}</p>}
+    </div>
+  )}
+  <div class="values-grid" style={gridStyle}>
+    {values.map((value) => (
+      <div class="vcard">
+        <div class="ic"><Icon name={value.data.icon} /></div>
+        <h3>{value.data.title}</h3>
+        <p>{value.data.summary}</p>
+      </div>
+    ))}
+  </div>
+</div>

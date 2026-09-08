@@ -1,0 +1,36 @@
+---
+/**
+ * Renders a page from its spec.
+ *
+ * A page file becomes `<Sections spec={home} />`. Reordering the homepage, or
+ * giving a different school a split hero and a numbered values list, is then
+ * an edit to an array in src/config/pages.ts.
+ *
+ * Blocks that own their own <section> are rendered bare; everything else is
+ * wrapped in one carrying the surface. See SELF_CONTAINED in the registry for
+ * why that distinction exists.
+ */
+import Section from './Section.astro';
+import { blockFor, metaFor } from '../blocks/registry';
+import type { SectionSpec } from '../../config/pages';
+
+interface Props {
+  spec: SectionSpec[];
+}
+
+const { spec } = Astro.props;
+---
+{spec.map((item) => {
+  const key = `${item.block}:${item.variant}`;
+  const Block = blockFor(key);
+  const meta = metaFor(key);
+  const props = item.props ?? {};
+  const classes = [meta.wrapper, item.class].filter(Boolean).join(' ') || undefined;
+  return meta.mode === 'self' ? (
+    <Block {...props} surface={item.surface} id={item.id} />
+  ) : (
+    <Section surface={item.surface} slim={item.slim} id={item.id} class={classes}>
+      <Block {...props} />
+    </Section>
+  );
+})}

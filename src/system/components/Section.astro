@@ -1,0 +1,32 @@
+---
+/**
+ * A section, and the ground it sits on.
+ *
+ * Replaces `style="background:var(--surface-2)"` written 31 times across the
+ * pages. An inline background says what colour to paint and nothing about
+ * what the text on it must become, which is why the dark sections each had to
+ * repeat four more rules of their own.
+ */
+import type { Surface } from '../blocks/types';
+
+interface Props {
+  surface?: Surface;
+  /** Tighter vertical rhythm, for sections that sit between two heavier ones. */
+  slim?: boolean;
+  id?: string;
+  class?: string;
+}
+
+const { surface = 'base', slim = false, id, class: extra } = Astro.props;
+
+// 'base' paints nothing: the page ground is already that colour, and an
+// explicit repaint would defeat any future page level background.
+const classes = [
+  extra,
+  surface !== 'base' ? `surface-${surface}` : null,
+  slim ? 'slim' : null,
+]
+  .filter(Boolean)
+  .join(' ');
+---
+<section id={id} class={classes || undefined}><slot /></section>

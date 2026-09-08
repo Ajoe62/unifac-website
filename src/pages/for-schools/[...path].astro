@@ -1,0 +1,111 @@
+---
+import { features } from '../../config/features';
+
+// GATED ROUTE. A rest parameter that generates exactly one path, or none.
+//
+// This file used to be src/pages/for-schools.astro. A page sitting in src/pages/ is routed
+// whether or not the school has the feature, so turning `forSchools` off removed
+// every link to this page and left the page itself reachable by anyone with
+// the URL. A school that does not run the For Schools pitch would have shipped one.
+//
+// Returning [] from getStaticPaths emits nothing. Returning a single undefined
+// path emits the parent route, which is the same URL this page always had.
+export function getStaticPaths() {
+  return features.forSchools ? [{ params: { path: undefined } }] : [];
+}
+
+import Icon from '../../system/components/Icon.astro';
+import Layout from '../../layouts/Layout.astro';
+import { site, mailto } from '../../config/site';
+---
+<Layout
+  title={`For Schools - The Technology Behind ${site.shortName}`}
+  description="TODO One sentence for search results. This page markets the software; rewrite it in this school's voice or switch off the forSchools feature."
+  active=""
+>
+
+<section class="page-hero">
+  <div class="wrap">
+    <p class="eyebrow">For Other Schools</p>
+    <h1>The software we built, and use every day.</h1>
+    <p>TODO This page is written in the software vendor's voice. Rewrite it for this school, or switch off the forSchools flag in src/config/features.ts and delete the page.</p>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="sec-head"><p class="eyebrow">Why We Built Them</p><h2>Written for the school we actually run.</h2><p>Most school software assumes a computer per child, a reliable connection, and a parent with an email address. That is not the school day here.</p></div>
+    <div class="feat-grid">
+      <div class="feat">
+        <div class="ic"><Icon name="mobile" /></div>
+        <h3>Built for the phone in the room</h3>
+        <p>A mid-range Android on mobile data is the target device, not a laptop. Lessons stay readable once loaded, so a bundle running out does not end the school day.</p>
+      </div>
+      <div class="feat">
+        <div class="ic"><Icon name="lock" /></div>
+        <h3>No accounts to manage</h3>
+        <p>Students sign in with a short username and an access code printed by the school. No email addresses for minors, no password resets, nothing for a parent to set up.</p>
+      </div>
+      <div class="feat">
+        <div class="ic"><Icon name="shield-check" /></div>
+        <h3>A teacher signs off everything</h3>
+        <p>AI drafts and AI marking are a first pass, never the last word. No score reaches a result sheet and no lesson reaches a student without a teacher having reviewed it.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section style="background:var(--surface-2)">
+  <div class="wrap">
+    <div class="sec-head"><p class="eyebrow">The Two Systems</p><h2>Assessment, and lessons.</h2></div>
+    <div class="feat-grid two">
+      <div class="feat">
+        <div class="ic"><Icon name="clipboard-check" /></div>
+        <h3>ResultPeak AI</h3>
+        <p>An assessment platform that takes each school on its own terms: your subjects, your assessment structure (mid-term test, project, examination) and your grading scale.</p>
+        <p>Objective questions are marked on submission. Written answers are marked with AI assistance and queued for tutor review. Scores flow into your term result sheet, ready to print or download.</p>
+        <p>Roles run superadmin, school administrator, tutor, student.</p>
+      </div>
+      <div class="feat">
+        <div class="ic"><Icon name="book-open" /></div>
+        <h3>JDSmartLearn</h3>
+        <p>A lesson system for primary and secondary. A tutor uploads a lesson; it comes back as a student summary, a set of practice questions, and a marking guide only the tutor can see.</p>
+        <p>The tutor edits and publishes. Students read it on their phone, offline once it has loaded.</p>
+        <p>It runs on the same roster as ResultPeak, so one username and code opens both.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="sec-head"><p class="eyebrow">Honest Scope</p><h2>What these do not do.</h2><p>Deliberately left out, so that what remains is solid. Some of it is planned; some of it is somebody else's product.</p></div>
+    <div class="two-col">
+      <div class="lead-copy">
+        <p><strong>Not built, and not planned for now:</strong> live classes, video lessons, attendance registers, timetabling, and native mobile apps. Each one is a product in its own right, and doing them badly would weaken the parts that work.</p>
+        <p><strong>Under consideration for a later version:</strong> school fee payments, parent messaging, and video. They are real needs; they are not the first thing to get right.</p>
+        <p>If one of those is the reason you are looking for software, we would rather tell you now than sell you a plan.</p>
+      </div>
+      <div class="cform" style="align-self:start">
+        <h3 style="font-family:var(--font-display);font-size:1.4rem;margin:0 0 .3rem">See it working</h3>
+        <p style="color:var(--muted);margin:0 0 1.2rem;font-size:.98rem">A walkthrough with a school administrator takes about half an hour, and we will use your subjects and your grading scale rather than a demo dataset.</p>
+        <a class="btn btn-brand" style="width:100%;margin-bottom:.7rem" href={mailto('ResultPeak / JDSmartLearn enquiry (from For Schools page)')}>Request a Walkthrough</a>
+        <p style="color:var(--muted);margin:1rem 0 0;font-size:.88rem">This enquiry is about the software. For admissions, please use the <a href="/admissions" style="color:var(--brand);font-weight:700">admissions page</a> instead.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="band">
+  <div class="wrap">
+    <p class="eyebrow" style="color:var(--accent-300)">Built in Benin City</p>
+    <h2>Tested in a real school, every term.</h2>
+    <p>TODO Who uses these systems day to day, and how quickly problems get found.</p>
+    <div class="cta">
+      <a class="btn btn-gold btn-lg" href={mailto('ResultPeak / JDSmartLearn enquiry')}>Start a Conversation <span class="arr">→</span></a>
+      <a class="btn btn-ghost btn-lg" href="/portal">See the Portal</a>
+    </div>
+  </div>
+</section>
+
+</Layout>

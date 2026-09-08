@@ -1,0 +1,154 @@
+/* ==========================================================================
+   SEMANTIC TOKENS
+
+   The mapping layer. generated/brand.css says what the school's colours are;
+   this file says what they mean. Every rule in primitives.css and blocks.css
+   reads from here and never from the raw palette, so a brand swap touches one
+   generated file and stops.
+
+   The rule that keeps it honest: no stylesheet below this one may contain a
+   colour literal that carries brand identity. Neutral literals (#fff, pure
+   black scrims, white highlights) are fine, because they mean the same thing
+   for every school.
+   ========================================================================== */
+
+:root {
+  /* ---- Colour roles ---------------------------------------------------- */
+  --brand: rgb(var(--brand-rgb));
+  --brand-900: rgb(var(--brand-900-rgb));
+  --accent: rgb(var(--accent-rgb));
+  --accent-300: rgb(var(--accent-300-rgb));
+  /** The accent where it has to be read rather than seen. See brand.css. */
+  --accent-text: rgb(var(--accent-text-rgb));
+  --feature: rgb(var(--feature-rgb));
+  --feature-900: rgb(var(--feature-900-rgb));
+  --surface: rgb(var(--surface-rgb));
+  --surface-2: rgb(var(--surface-2-rgb));
+  --ink: rgb(var(--ink-rgb));
+  --muted: rgb(var(--muted-rgb));
+
+  /** Cards and forms sit above the page ground rather than on it. */
+  --card: #fff;
+
+  /* ---- Rules and tints ------------------------------------------------- */
+  /*
+   * Each of these replaces a hand written rgba() that hardcoded the brand.
+   * The count in the header of blocks.css is not decoration: it is the number
+   * of places a palette swap used to silently fail.
+   */
+  --line: rgb(var(--brand-rgb) / 0.14);
+  --line-accent: rgb(var(--accent-300-rgb) / 0.22);
+  --line-accent-strong: rgb(var(--accent-rgb) / 0.55);
+  --tint-accent: rgb(var(--accent-rgb) / 0.14);
+  --tint-brand: rgb(var(--brand-rgb) / 0.08);
+  --tint-accent-soft: rgb(var(--accent-rgb) / 0.1);
+  --tint-accent-mid: rgb(var(--accent-rgb) / 0.12);
+  --tint-accent-ring: rgb(var(--accent-rgb) / 0.18);
+  --tint-accent-hero: rgb(var(--accent-rgb) / 0.22);
+  --tint-accent-hero-2: rgb(var(--accent-rgb) / 0.24);
+  --line-accent-ring: rgb(var(--accent-300-rgb) / 0.35);
+  --line-accent-dash: rgb(var(--accent-300-rgb) / 0.28);
+  --line-accent-crest: rgb(var(--accent-300-rgb) / 0.5);
+  --inset-accent: rgb(var(--accent-300-rgb) / 0.06);
+
+  /** Header glass. The page ground at 92%, so the blur reads as the page. */
+  --surface-glass: rgb(var(--surface-rgb) / 0.92);
+
+  /* ---- Text on coloured grounds ---------------------------------------- */
+  --on-surface: var(--ink);
+  --on-surface-muted: var(--muted);
+
+  /* ---- Elevation ------------------------------------------------------- */
+  /*
+   * Shadows are tinted with the brand rather than with black. It is why the
+   * cards on this site feel warm instead of dirty, and it only survives a
+   * rebrand because the tint is derived here.
+   */
+  --shadow-card: 0 18px 40px rgb(var(--brand-rgb) / 0.12);
+  --shadow-card-strong: 0 18px 40px rgb(var(--brand-rgb) / 0.14);
+  --shadow-card-lg: 0 26px 54px rgb(var(--brand-rgb) / 0.18);
+  --shadow-photo: 0 24px 44px rgb(var(--brand-rgb) / 0.22);
+  --shadow-form: 0 18px 44px rgb(var(--brand-rgb) / 0.08);
+  --shadow-brand-btn: 0 8px 20px rgb(var(--brand-rgb) / 0.24);
+  --shadow-brand-btn-hover: 0 14px 30px rgb(var(--brand-rgb) / 0.34);
+
+  /** Neutral depth, for things lifted off a photograph rather than the page. */
+  --shadow-float: 0 30px 60px rgb(0 0 0 / 0.35);
+  --shadow-crest: 0 12px 30px rgb(0 0 0 / 0.3);
+
+  /*
+   * The gold button's lift. Tinted with --accent-deep, not --accent: a shadow
+   * in the accent's own colour reads as a glow and washes the edge out.
+   */
+  --glow-accent: 0 8px 20px rgb(var(--accent-deep-rgb) / 0.3),
+    inset 0 1px 0 rgb(255 255 255 / 0.4);
+  --glow-accent-hover: 0 14px 30px rgb(var(--accent-deep-rgb) / 0.42),
+    inset 0 1px 0 rgb(255 255 255 / 0.5);
+  --glow-accent-sm: 0 8px 18px rgb(var(--accent-deep-rgb) / 0.28);
+
+  /* ---- Gradients ------------------------------------------------------- */
+  /** The dark header ground, shared by the hero and every interior page head. */
+  --grad-brand: linear-gradient(160deg, var(--brand) 0%, var(--brand-900) 100%);
+  --grad-brand-tile: linear-gradient(150deg, var(--brand), var(--brand-900));
+  --grad-feature: linear-gradient(120deg, var(--feature), var(--feature-900));
+  --grad-feature-tile: linear-gradient(150deg, var(--feature), var(--feature-900));
+  --grad-accent: linear-gradient(180deg, var(--accent-300), var(--accent));
+
+  /*
+   * Card placeholders, behind a thumbnail that has not decoded yet. The stops
+   * come from the generated palette rather than from color-mix() in this file;
+   * see the note beside them in generated/brand.css for why the arithmetic
+   * happens at generate time.
+   */
+  --grad-thumb-brand: linear-gradient(
+    135deg,
+    rgb(var(--brand-300-rgb)),
+    var(--brand)
+  );
+  --grad-thumb-feature: linear-gradient(
+    135deg,
+    rgb(var(--feature-300-rgb)),
+    var(--feature)
+  );
+  --grad-thumb-accent: linear-gradient(
+    135deg,
+    rgb(var(--accent-200-rgb)),
+    rgb(var(--accent-700-rgb))
+  );
+
+  /** Hero glare. A wash of accent light entering from the top right. */
+  --glare-accent: radial-gradient(
+    120% 90% at 85% -10%,
+    var(--tint-accent-hero),
+    transparent 55%
+  );
+  --glare-accent-tall: radial-gradient(
+    120% 130% at 88% -25%,
+    var(--tint-accent-hero-2),
+    transparent 55%
+  );
+
+  /* ---- Photo overlays -------------------------------------------------- */
+  /*
+   * Deliberately light. Legibility over the carousel comes from the headline's
+   * own text shadow, so the photographs stay bright rather than being buried
+   * under a scrim.
+   */
+  --overlay-photo: linear-gradient(
+    180deg,
+    rgb(var(--scrim-rgb) / 0.18) 0%,
+    rgb(var(--scrim-rgb) / 0.02) 32%,
+    rgb(var(--scrim-rgb) / 0.38) 100%
+  );
+  --overlay-feature: linear-gradient(
+    120deg,
+    rgb(var(--feature-rgb) / 0.82),
+    rgb(var(--feature-900-rgb) / 0.6) 60%,
+    rgb(var(--brand-900-rgb) / 0.55)
+  );
+
+  /* ---- Motion ---------------------------------------------------------- */
+  --ease: cubic-bezier(0.4, 0, 0.2, 1);
+  --lift: translateY(-4px);
+  --lift-sm: translateY(-2px);
+}

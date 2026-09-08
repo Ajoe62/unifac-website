@@ -1,0 +1,103 @@
+---
+/**
+ * One entry point on the portal hub.
+ *
+ * Renders as a link when the destination is live and as an inert card when it
+ * is not, so a page can list every future entry point without ever handing a
+ * student a broken link. Built on the existing .feat card (enhance.css) so it
+ * inherits the site's hover lift, icon tile and mobile stacking.
+ */
+interface Props {
+  title: string;
+  href?: string | null;
+  action?: string;
+  meta?: string;
+  external?: boolean;
+  /** Key into appFor(): renders the "this opens X" line under the action. */
+  app?: string | null;
+}
+
+import { appFor } from '../../../config/integrations';
+
+const { title, href = null, action = 'Open', meta, external = true, app = null } = Astro.props;
+// Only named on a card that actually leaves the site. Telling somebody they
+// are about to be handed to another application, by name, is what stops the
+// next screen reading as a stranger's website; saying it on a card that stays
+// on mtcedar...com.ng would just be noise.
+const handoff = href && String(href).startsWith('http') ? appFor(app) : null;
+const live = Boolean(href);
+const Tag = live ? 'a' : 'div';
+const attrs = live
+  ? { href, ...(external ? { rel: 'noopener' } : {}) }
+  : { 'aria-disabled': 'true' };
+---
+<Tag class={`feat pcard-link${live ? '' : ' is-pending'}`} {...attrs}>
+  <div class="ic"><slot name="icon" /></div>
+  <h3>{title}</h3>
+  <p><slot /></p>
+  {meta && <p class="pcard-meta">{meta}</p>}
+  <p class="pcard-action">
+    {live ? <>{action} <span class="arr">→</span></> : <>Opening soon</>}
+  </p>
+  {handoff && (
+    <p class="pcard-handoff">
+      Opens <strong>{handoff.name}</strong>, {handoff.role}.
+    </p>
+  )}
+</Tag>
+
+<style>
+  .pcard-link {
+    display: block;
+    height: 100%;
+  }
+  .pcard-link.is-pending {
+    opacity: 0.72;
+    background: transparent;
+    border-style: dashed;
+  }
+  .pcard-link.is-pending:hover {
+    transform: none;
+    box-shadow: none;
+  }
+  .pcard-meta {
+    font-size: 0.86rem;
+    font-weight: 600;
+    color: var(--brand);
+    background: var(--tint-accent-mid);
+    border-radius: 8px;
+    padding: 0.5rem 0.7rem;
+    margin-top: 0.9rem;
+  }
+  .pcard-action {
+    font-weight: 800;
+    font-size: 0.9rem;
+    color: var(--brand);
+    margin-top: 1.1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+  .is-pending .pcard-action {
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    font-size: 0.72rem;
+  }
+  .pcard-handoff {
+    font-size: 0.8rem;
+    color: var(--muted);
+    margin: 0.5rem 0 0;
+    line-height: 1.45;
+  }
+  .pcard-handoff strong {
+    color: var(--ink);
+    font-weight: 700;
+  }
+  .pcard-link .arr {
+    transition: transform 0.2s ease;
+  }
+  .pcard-link:hover .arr {
+    transform: translateX(4px);
+  }
+</style>

@@ -1,0 +1,33 @@
+---
+/**
+ * One photograph, one headline. The variant for a school with a single good
+ * picture of itself, which is most schools in their first year.
+ */
+import { Image } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+import type { Action } from '../types';
+import Actions from '../Actions.astro';
+
+interface Props {
+  image: ImageMetadata;
+  alt: string;
+  headline: string;
+  lead?: string;
+  actions?: Action[];
+}
+
+const { image, alt, headline, lead, actions = [] } = Astro.props;
+---
+<section class="hero-carousel">
+  <div class="hc-slides" aria-hidden="true">
+    <div class="hc-slide is-active">
+      <Image src={image} alt={alt} widths={[768, 1200, 1672]} sizes="100vw" format="webp" quality={82} loading="eager" fetchpriority="high" />
+    </div>
+  </div>
+  <div class="hc-overlay" aria-hidden="true"></div>
+  <div class="hc-content">
+    <h1 set:html={headline} />
+    {lead && <p class="lead">{lead}</p>}
+    {actions.length > 0 && <Actions actions={actions} large />}
+  </div>
+</section>

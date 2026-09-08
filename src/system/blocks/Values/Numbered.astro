@@ -1,0 +1,24 @@
+---
+/**
+ * The same promises as a numbered sequence rather than a card row.
+ *
+ * Built on the existing .steps pattern, which already knows how to draw a
+ * numbered badge. Worth having as a variant because a card row and a numbered
+ * list say different things: cards say "three equal things", numbers say
+ * "in this order", and a school whose values build on each other means the
+ * second.
+ */
+import { getCollection } from 'astro:content';
+
+const values = (await getCollection('values')).sort((a, b) => a.data.order - b.data.order);
+---
+<div class="wrap">
+  <div class="steps">
+    {values.map((value) => (
+      <div class="step">
+        <h3>{value.data.title}</h3>
+        <p>{value.data.summary}</p>
+      </div>
+    ))}
+  </div>
+</div>

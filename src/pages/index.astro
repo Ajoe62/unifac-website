@@ -1,0 +1,9 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Sections from '../system/components/Sections.astro';
+import { site } from '../config/site';
+import { home } from '../config/pages';
+---
+<Layout title={`${site.name}, ${site.address.city}`} active="">
+  <Sections spec={home} />
+</Layout>

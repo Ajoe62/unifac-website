@@ -1,0 +1,117 @@
+---
+import Icon from '../system/components/Icon.astro';
+import Layout from '../layouts/Layout.astro';
+import { site } from '../config/site';
+import MediaText from '../system/blocks/Media/Text.astro';
+import Facilities from '../system/blocks/Feature/Grid.astro';
+import { portalHref } from '../config/integrations';
+import { Image } from 'astro:assets';
+import { getCollection } from 'astro:content';
+
+// Same applicant registration the homepage hero points at.
+const applyHref = portalHref('entrance') ?? '/admissions';
+const applyAttrs = applyHref.startsWith('http') ? { rel: 'noopener' } : {};
+import introPhoto from '../assets/images/classroom.jpg';
+import libraryPhoto from '../assets/images/library.jpg';
+
+// Four stage cards across, so each one is roughly a quarter of the container
+// rather than the third the three-card layouts elsewhere ask for.
+const cardSizes = '(max-width: 820px) 92vw, (max-width: 1080px) 46vw, 23vw';
+
+// The four stages, in order. A school running three stages, or six, adds or
+// removes a Markdown file; the grid class below already adapts.
+const programmes = (await getCollection('programmes')).sort((a, b) => a.data.order - b.data.order);
+---
+<Layout
+  title={`Academics-${site.name}`}
+  description="TODO One sentence for search results. Which curriculum, at which stages, and where."
+  active="academics"
+>
+
+<section class="page-hero">
+  <div class="wrap">
+    <p class="eyebrow">Academics</p>
+    <h1>TODO A headline for the academic path.</h1>
+    <p>The British EYFS with Montessori in the Nursery, then the Nigerian Curriculum enriched with Cambridge from Primary to Senior Secondary, taught by caring teachers in small, focused classes.</p>
+  </div>
+</section>
+
+<MediaText
+  image={introPhoto}
+  alt="Learners in a bright classroom"
+  eyebrow="Our Approach"
+  title="TODO A headline for the teaching approach."
+>
+  <p>TODO How lessons actually run here. Class sizes, how a child is stretched.</p>
+  <p>TODO What the school pairs academic standards with.</p>
+</MediaText>
+
+<section class="academics">
+  <div class="wrap">
+    <div class="sec-head"><p class="eyebrow">Our Programmes</p><h2>Every stage, thoughtfully designed.</h2><p>Four connected stages that carry each child from playful early learning to confident, examination-ready study.</p></div>
+    <div class={`prog${programmes.length === 4 ? ' four' : ''}`}>
+      {programmes.map((programme) => (
+        <div class="pcard has-media">
+          <div class="pcard-media"><Image src={programme.data.cover} alt={programme.data.coverAlt} widths={[400, 640, 900]} sizes={cardSizes} format="webp" quality={72} loading="lazy" /></div>
+          <div class="pcard-in"><div class="age">{programme.data.stage}</div><h3>{programme.data.title}</h3><p>{programme.data.summary}</p></div>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
+
+<MediaText
+  image={libraryPhoto}
+  alt="The school library"
+  eyebrow="Beyond the Textbook"
+  title="A curriculum that goes further."
+  reverse={true}
+  surface="alt"
+>
+  <p>TODO What sits at the heart of this school beyond the timetable.</p>
+  <p>Specialist lessons in the arts, science and sport round out a broad, balanced education for every stage.</p>
+  <p>TODO How work carries home. If the school uses the portal, link it here; if not, delete this paragraph and switch off the portal feature.</p>
+</MediaText>
+
+<section>
+  <div class="wrap">
+    <div class="sec-head"><p class="eyebrow">Why {site.shortName}</p><h2>How we teach.</h2><p>British rigour, small classes, and a genuine knowledge of every child.</p></div>
+    <div class="feat-grid">
+      <div class="feat">
+        <div class="ic"><Icon name="book" /></div>
+        <h3>EYFS, Cambridge and the National Curriculum</h3>
+        <p>Internationally recognised standards enriching the Nigerian Curriculum, so your child is at home here and recognised anywhere.</p>
+      </div>
+      <div class="feat">
+        <div class="ic"><Icon name="users" /></div>
+        <h3>Small, Focused Classes</h3>
+        <p>Low pupil-to-teacher ratios mean lessons move at the right pace and no child is left behind.</p>
+      </div>
+      <div class="feat">
+        <div class="ic"><Icon name="shield-check" /></div>
+        <h3>Strong Pastoral Care</h3>
+        <p>We know each learner as an individual, supporting wellbeing and character alongside academic progress.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<Facilities
+  surface="alt"
+  title="Learning you can put your hands on."
+  intro="Well equipped Biology, Chemistry, Physics and Computer laboratories, a music studio, a stocked library and sports facilities, so lessons are practised, not only taught."
+/>
+
+<section class="band">
+  <div class="wrap">
+    <p class="eyebrow" style="color:var(--accent-300)">Admissions Open</p>
+    <h2>Find the right stage for your child.</h2>
+    <p>TODO A closing line inviting an enquiry about a specific year group.</p>
+    <div class="cta">
+      <a class="btn btn-gold btn-lg" href={applyHref} {...applyAttrs}>Apply for a Place <span class="arr">→</span></a>
+      <a class="btn btn-ghost btn-lg" href="/contact">Ask a Question</a>
+    </div>
+  </div>
+</section>
+
+</Layout>

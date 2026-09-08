@@ -1,0 +1,154 @@
+---
+import { features } from '../../../config/features';
+
+// GATED ROUTE. A rest parameter that generates exactly one path, or none.
+//
+// This file used to be src/pages/portal/help.astro. A page sitting in src/pages/ is routed
+// whether or not the school has the feature, so turning `portal` off removed
+// every link to this page and left the page itself reachable by anyone with
+// the URL. A school that does not run a portal would have shipped one.
+//
+// Returning [] from getStaticPaths emits nothing. Returning a single undefined
+// path emits the parent route, which is the same URL this page always had.
+export function getStaticPaths() {
+  return features.portal ? [{ params: { path: undefined } }] : [];
+}
+
+import Layout from '../../../layouts/Layout.astro';
+import { site, tel, phoneLabel, mailto } from '../../../config/site';
+import { routeLive } from '../../../config/integrations';
+
+const resultLookupLive = routeLive('results');
+---
+<Layout
+  title={`Sign-in Guide - ${site.shortName} Portal`}
+  description="TODO One sentence for search results, about signing in to the portal."
+  active="portal"
+>
+
+<section class="page-hero">
+  <div class="wrap">
+    <p class="eyebrow">Portal Help</p>
+    <h1>Signing in, explained simply.</h1>
+    <p>Written for parents and students. If something here does not match what you are seeing, call the school; do not keep guessing at the code.</p>
+  </div>
+</section>
+
+<section>
+  <div class="wrap two-col">
+    <div class="lead-copy">
+      <h2 id="details">The two details</h2>
+      <p>Every student is given two things, printed on a sheet by the class teacher. Together they are the login. There is no email address, no password to choose, and nothing to install.</p>
+
+      <div class="cred">
+        <div>
+          <span class="cred-k">Username</span>
+          <span class="cred-v">jss3-04</span>
+          <p>The class, then the child’s number in that class. It never changes, not when they move up a class, not when a class is renamed. Always lowercase, with a hyphen.</p>
+        </div>
+        <div>
+          <span class="cred-k">Access code</span>
+          <span class="cred-v">UU3TMK</span>
+          <p>Six characters. Deliberately avoids letters and numbers that look alike, because children read these off paper. Type it exactly as printed.</p>
+        </div>
+      </div>
+
+      <h2 id="where">Which door to use</h2>
+      <p>The <strong>Portal Sign-in</strong> link at the top of any page opens <a href="/portal">the portal</a>, which asks one question first: student, staff or administrator. Nothing asks for a password until after you have answered it, so nobody ends up staring at a sign-in form meant for somebody else.</p>
+      <p>Behind the student door are two cards: <strong>lessons</strong> and <strong>assessments</strong>. They are two separate systems the school uses, and both take the same username and access code. Each card says which one it opens before you click it, and {site.shortName} is already selected on both, so your child types the two details and nothing else. Use the links rather than typing an address by hand.</p>
+      <p>Staff do not use a username and code. Teachers and administrators sign in with the email address and password the school issued them, on <a href="/portal/staff">the staff door</a>.</p>
+
+      <h2 id="lost">If a code is lost</h2>
+      <p>Ask the class teacher or the school office for a replacement sheet. For your child’s safety we do not read access codes out over the phone to an unconfirmed caller; a code is the key to their work and their results.</p>
+      <p>If a code stops working entirely, tell us rather than trying repeatedly. Repeated failed attempts are deliberately slowed down to protect the account, so a child who keeps guessing will find it gets slower, not easier.</p>
+
+      <h2 id="offline">Data, phones and going offline</h2>
+      <p>The lessons side is built for a mid-range Android phone on mobile data, not a laptop on fibre. A lesson loads once and then stays readable with the data switched off, so a child can read on the way home or after the bundle runs out.</p>
+      <p>Assessments are different: sitting a paper needs a live connection from start to submit, because answers are saved as they go. Sit assessments where the signal is steady.</p>
+      <p>Keep the browser you signed in with. Signing in again on a different phone is fine, but the offline copy of a lesson lives on the phone that opened it.</p>
+
+      <h2 id="results">How results are issued</h2>
+      <p>Term result sheets are prepared by teachers and released by the school after each term is finalised. {resultLookupLive ? 'Online lookup shows only results the school has released, so a result you cannot see yet is one that has not been published.' : 'Online lookup is not open yet; sheets are issued directly by the school office.'}</p>
+      <p>Objective answers are marked automatically. Written answers are marked with AI assistance and then reviewed by the teacher, and no score reaches a result sheet without a teacher having seen it.</p>
+
+      <h2 id="safety">Keeping the login safe</h2>
+      <p>The username and code belong to one child. Sharing them lets someone else read that child’s lessons and sit their assessment. Treat the printed sheet the way you would treat a bank card, and tell us if it goes missing.</p>
+    </div>
+
+    <aside class="cform" style="align-self:start">
+      <h3 style="font-family:var(--font-display);font-size:1.4rem;margin:0 0 .3rem">Still stuck?</h3>
+      <p style="color:var(--muted);margin:0 0 1.2rem;font-size:.98rem">Reach the school office directly and we will sort it out with you.</p>
+      <a class="btn btn-brand" style="width:100%;margin-bottom:.7rem" href={tel(0)}>Call {phoneLabel(0)}</a>
+      <a class="btn btn-outline" style="width:100%;margin-bottom:1.4rem" href={mailto('Portal sign-in help')}>Email the School</a>
+      <p style="color:var(--muted);margin:0;font-size:.9rem">Office hours are the best time to reset a code, because we confirm who you are before issuing a new one.</p>
+    </aside>
+  </div>
+</section>
+
+<section class="band">
+  <div class="wrap">
+    <p class="eyebrow" style="color:var(--accent-300)">Ready</p>
+    <h2>Head back to the portal.</h2>
+    <p>Assessments, lessons and results, all from one page.</p>
+    <div class="cta">
+      <a class="btn btn-gold btn-lg" href="/portal">Open the Portal <span class="arr">→</span></a>
+    </div>
+  </div>
+</section>
+
+</Layout>
+
+<style>
+  .lead-copy h2 {
+    font-size: clamp(1.4rem, 2.4vw, 1.8rem);
+    margin: 2.6rem 0 0.8rem;
+    scroll-margin-top: 6rem;
+  }
+  .lead-copy h2:first-child {
+    margin-top: 0;
+  }
+  .lead-copy a {
+    color: var(--brand);
+    font-weight: 700;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+  .cred {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.1rem;
+    margin: 1.6rem 0 0.5rem;
+  }
+  .cred > div {
+    background: var(--card);
+    border: var(--border-weight) solid var(--line);
+    border-radius: var(--radius-card);
+    padding: 1.3rem 1.4rem;
+  }
+  .cred-k {
+    display: block;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    font-size: 0.72rem;
+    color: var(--accent);
+  }
+  .cred-v {
+    display: block;
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--brand);
+    margin: 0.35rem 0 0.6rem;
+    letter-spacing: 0.04em;
+  }
+  .cred p {
+    margin: 0;
+    font-size: 0.94rem;
+  }
+  @media (max-width: 620px) {
+    .cred {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

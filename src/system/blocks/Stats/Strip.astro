@@ -1,0 +1,26 @@
+---
+/**
+ * The band of four facts under the hero. Its content is not a collection: a
+ * school does not add and remove facts, it states the same handful about
+ * itself, so these are spec props.
+ */
+export interface Stat {
+  /** The large line. "EYFS + Cambridge", "Nursery to SS3". */
+  value: string;
+  /** The small uppercase caption underneath. */
+  label: string;
+}
+
+interface Props {
+  stats: Stat[];
+}
+
+const { stats } = Astro.props;
+---
+<div class="facts">
+  <div class="wrap">
+    {stats.map((stat) => (
+      <div class="f"><b>{stat.value}</b><span>{stat.label}</span></div>
+    ))}
+  </div>
+</div>

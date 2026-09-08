@@ -1,0 +1,103 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { site, phoneLabel } from '../config/site';
+---
+<Layout
+  title={`Privacy - ${site.name}`}
+  description="TODO One sentence for search results, about how the school handles personal information."
+  active=""
+>
+
+<section class="page-hero">
+  <div class="wrap">
+    <p class="eyebrow">Privacy</p>
+    <h1>How we handle your family's information.</h1>
+    <p>Most of the people using our portal are children. This page says plainly what is collected, who processes it, and what you can ask us to do about it.</p>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="lead-copy">
+      <h2>This website</h2>
+      <p>The public pages of this site do not set advertising cookies, do not run analytics, and do not ask you to log in. Fonts are loaded from Google Fonts, which means Google receives a request from your browser when a page loads.</p>
+      <p>When you email or call us, we keep what you send for as long as we need it to answer you and, if your child joins the school, as part of their admission record.</p>
+
+      <h2>The student portal</h2>
+      <p>The portal is two connected systems (an assessment platform and a lesson system), reached from <a href="/portal">the portal page</a>. Both are used under the school's direction.</p>
+
+      <h3>What is held about a student</h3>
+      <ul>
+        <li>Name, class, and admission number.</li>
+        <li>A short username and an access code, issued by the school. No email address is required or collected from a student.</li>
+        <li>Their answers to assessments, the marks awarded, and the resulting term result sheet.</li>
+        <li>Which lessons they have opened.</li>
+      </ul>
+
+      <h3>Who processes it</h3>
+      <p>The school decides what is collected and why. The following services process it on our behalf:</p>
+      <ul>
+        <li><strong>Google Firebase</strong>: stores student records, assessment answers and results.</li>
+        <li><strong>Google Gemini</strong>: produces a first-pass mark on written answers and drafts lesson summaries and practice questions from material a teacher uploads. A teacher reviews every output before it counts or is published.</li>
+        <li><strong>Cloudflare R2</strong>: stores the lesson files teachers upload.</li>
+        <li><strong>Vercel</strong>: runs the two applications.</li>
+      </ul>
+      <p>These providers process data outside Nigeria. We do not sell personal information, and we do not share it with anyone for advertising.</p>
+
+      <h3>Marking, and where the judgement sits</h3>
+      <p>Objective questions are marked automatically. Written answers receive an AI-assisted first pass which a teacher then reviews. No mark reaches a result sheet without a teacher having seen it, and a result is never decided by software alone.</p>
+
+      <h3>Access codes</h3>
+      <p>An access code is a credential belonging to one child. The school issues it, can reset it, and will not release one to a caller we have not confirmed. If you think a code has been seen by someone else, tell us and we will replace it.</p>
+
+      <h2>Keeping and deleting</h2>
+      <p>Academic records (results and result sheets) are kept as part of the student's school record, as any school keeps them. Lesson-viewing records are operational and are not kept indefinitely. When a student leaves, their sign-in is deactivated; the academic record remains.</p>
+
+      <h2>Your requests</h2>
+      <p>You may ask what we hold about your child, ask us to correct it, ask for a copy, or raise a concern about how it is being used. Contact the school office and we will deal with it directly, at <a href={`mailto:${site.email}`}>{site.email}</a> or {phoneLabel(0)}.</p>
+      <p>This page is written to be understood rather than to be exhaustive. If you need something more formal for a specific purpose, ask us and we will provide it.</p>
+    </div>
+  </div>
+</section>
+
+<section class="band">
+  <div class="wrap">
+    <p class="eyebrow" style="color:var(--accent-300)">Questions</p>
+    <h2>Ask us anything about this.</h2>
+    <p>We would rather answer a question than have you wondering.</p>
+    <div class="cta">
+      <a class="btn btn-gold btn-lg" href="/contact">Contact the School <span class="arr">→</span></a>
+    </div>
+  </div>
+</section>
+
+</Layout>
+
+<style>
+  .lead-copy h2 {
+    font-size: clamp(1.4rem, 2.4vw, 1.8rem);
+    margin: 2.6rem 0 0.8rem;
+  }
+  .lead-copy h2:first-child {
+    margin-top: 0;
+  }
+  .lead-copy h3 {
+    font-size: 1.12rem;
+    margin: 1.8rem 0 0.6rem;
+  }
+  .lead-copy ul {
+    color: var(--muted);
+    font-size: 1.06rem;
+    margin: 0 0 1.1rem;
+    padding-left: 1.2rem;
+  }
+  .lead-copy li {
+    margin-bottom: 0.5rem;
+  }
+  .lead-copy a {
+    color: var(--brand);
+    font-weight: 700;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+</style>

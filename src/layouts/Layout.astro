@@ -1,0 +1,195 @@
+---
+// The stylesheet chain, and it is an order not a set. Each layer may only
+// read from the one above it:
+//   generated/brand.css  what this school's colours and shapes ARE
+//   tokens.css           what they MEAN (--brand, --shadow-card, --on-accent)
+//   reset.css            element defaults
+//   surfaces.css         the four grounds a section may sit on
+//   primitives.css       buttons, cards, measure, section rhythm
+//   blocks.css           one stanza per section pattern
+//
+// A new school replaces exactly one of these, the first. Everything below it
+// is system code, identical across every site built from this template, and
+// the reason it can stay identical is that no layer below tokens.css is
+// allowed to contain a colour literal carrying brand identity.
+import '../system/styles/generated/brand.css';
+import '../system/styles/tokens.css';
+import '../system/styles/reset.css';
+import '../system/styles/surfaces.css';
+import '../system/styles/primitives.css';
+import '../system/styles/blocks.css';
+
+// The same discipline, applied to words instead of colours. Nothing about this
+// school is written into the chrome below: the name, the crest, the address,
+// the numbers, the nav and the year all come from config, so standing up the
+// next school is an edit to src/config and not a search through src/.
+import { site, addressLine, mapsUrl, tel, apexDomain, origin } from '../config/site';
+import { featureEnabled } from '../config/features';
+
+// The font families are declared in generated/brand.css and FETCHED here, and
+// the two used to be written out separately. A preset swap could then load
+// Fraunces and apply Sora. Both now come from brand/fonts.json, which
+// `npm run brand:init` writes alongside the palette.
+import fonts from '../../brand/fonts.json';
+
+// EVERY portal entry point on this site is an internal one.
+//
+// The utility bar used to link straight out to ResultPeak, so the first screen
+// after clicking "Student Portal" carried another product's logo and asked for
+// a password. It reads as a third party's software because, at that moment, it
+// is one. Both links below stay on the school's own domain and land on a page
+// wearing its crest, which then names the application it hands you to. That is
+// also why nothing here imports portalHref: no outbound URL belongs in the site
+// chrome at all.
+const portalHome = '/portal';
+const staffPortal = '/portal/staff';
+const studentPortal = '/portal/students';
+
+const {
+  title = site.defaultTitle,
+  description = site.defaultDescription,
+  active = '',
+  /**
+   * Page level social card. Pass a path under public/ to override the crest
+   * card that brand:init generates. Absolute URLs are built below: a relative
+   * og:image is ignored by every scraper, which is the most common way this
+   * tag is present and useless.
+   */
+  image = '/og-image.png',
+} = Astro.props;
+
+/*
+ * CANONICAL AND SOCIAL METADATA.
+ *
+ * Both were missing entirely: zero of thirteen pages carried a canonical link,
+ * an og: tag or a Twitter card. For a school whose links are passed around on
+ * WhatsApp, that is the difference between a crest with the school's name and
+ * a bare grey URL, on every share, forever.
+ *
+ * Everything here is derived. There is no per page social copy to forget to
+ * update, because the title and description a page already passes for <title>
+ * and the meta description are the same two strings a share card wants.
+ *
+ * Absolute URLs are mandatory for og:image and og:url. `origin` comes from
+ * site.domain, the same value astro.config.mjs uses for the sitemap, so a
+ * canonical link can never disagree with the host the sitemap advertises.
+ */
+const canonical = new URL(Astro.url.pathname, origin).href;
+const socialImage = new URL(image, origin).href;
+
+// Filtered once, used three times. A link that survives its feature being
+// switched off is a 404 with a signpost pointing at it, and the way that
+// happens is a header list and a footer list maintained separately.
+const nav = site.nav.filter((item) => featureEnabled(item.feature));
+const footerLinks = site.footerLinks.filter((item) => featureEnabled(item.feature));
+const legalLinks = site.legalLinks.filter((item) => featureEnabled(item.feature));
+const portalEnabled = featureEnabled('portal');
+---
+<!doctype html>
+<html lang={site.locale}>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>{title}</title>
+  <meta name="description" content={description} />
+  <link rel="canonical" href={canonical} />
+
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content={site.name} />
+  <meta property="og:title" content={title} />
+  <meta property="og:description" content={description} />
+  <meta property="og:url" content={canonical} />
+  <meta property="og:image" content={socialImage} />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:alt" content={site.logo.alt} />
+  <meta property="og:locale" content={site.ogLocale} />
+
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content={title} />
+  <meta name="twitter:description" content={description} />
+  <meta name="twitter:image" content={socialImage} />
+
+  <link rel="icon" href="/favicon.ico" sizes="any" />
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href={`https://fonts.googleapis.com/css2?${fonts.google}&display=swap`} rel="stylesheet" />
+</head>
+<body>
+
+<div class="util">
+  <div class="wrap">
+    <div class="u-l"><span>{site.address.short}</span></div>
+    <div class="u-r">
+      {portalEnabled && <a href="/portal/help">Sign-in help</a>}
+      {portalEnabled && <a href={staffPortal}>Staff Login</a>}
+      {portalEnabled && <a class="apply" href={portalHome}>{site.ctas.portal.label}</a>}
+    </div>
+  </div>
+</div>
+
+<header class="site">
+  <div class="wrap">
+    <a class="brand" href="/">
+      <img src={site.logo.src} alt={site.logo.alt} width="46" height="46" />
+      <span><b>{site.shortName}</b><small>{site.descriptor}</small></span>
+    </a>
+    <nav class="main">
+      {nav.map((item) => (
+        <a href={item.href} class={active === item.key ? 'is-active' : ''}>{item.label}</a>
+      ))}
+    </nav>
+    <a class="btn btn-gold" href={site.ctas.visit.href}>{site.ctas.visit.label}</a>
+    <button class="menu-btn" aria-label="Toggle menu" aria-expanded="false" id="menuBtn">☰</button>
+  </div>
+  <nav class="mobile-nav" id="mobileNav">
+    {nav.map((item) => (
+      <a href={item.href} class={active === item.key ? 'is-active' : ''}>{item.label}</a>
+    ))}
+    <a class="btn btn-gold" href={site.ctas.visit.href}>{site.ctas.visit.label}</a>
+  </nav>
+</header>
+
+<slot />
+
+<footer class="site">
+  <div class="wrap">
+    <div class="fbrand">
+      <a class="brand" href="/">
+        <img src={site.logo.src} alt={`${site.shortName} crest`} width="46" height="46" />
+        <span><b>{site.shortName}</b><small>{site.descriptor}</small></span>
+      </a>
+      <p>{site.footerBlurb}</p>
+    </div>
+    <div>
+      <h4>Visit &amp; Contact</h4>
+      <a href={mapsUrl} target="_blank" rel="noopener">{addressLine}</a>
+      <a href="/contact#directions">Directions to the school</a>
+      {site.phones.map((phone, i) => <a href={tel(i)}>{phone.display}</a>)}
+      <a href={`mailto:${site.email}`}>{site.email}</a>
+    </div>
+    <div>
+      <h4>Explore</h4>
+      {footerLinks.map((item) => <a href={item.href}>{item.label}</a>)}
+    </div>
+  </div>
+  <div class="foot-b"><div class="wrap"><span>© {site.copyrightYear} {site.name}</span><span class="foot-links">{legalLinks.map((item) => <a href={item.href}>{item.label}</a>)}</span><span>{apexDomain}</span></div></div>
+</footer>
+
+<script>
+  const btn = document.getElementById('menuBtn');
+  const menu = document.getElementById('mobileNav');
+  if (btn && menu) {
+    btn.addEventListener('click', () => {
+      const open = menu.classList.toggle('open');
+      btn.setAttribute('aria-expanded', String(open));
+      btn.textContent = open ? '✕' : '☰';
+    });
+  }
+</script>
+
+</body>
+</html>

@@ -1,0 +1,40 @@
+# build output
+dist/
+# Baseline builds made while verifying a refactor renders identically.
+dist-*/
+
+# generated types
+.astro/
+
+# dependencies
+node_modules/
+
+# logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# environment variables
+.env
+.env.*
+!.env.example
+
+# macOS
+.DS_Store
+
+# Windows / Git Bash crash artefacts
+*.stackdump
+
+# editor folders
+.idea/
+.vscode/*
+!.vscode/extensions.json
+
+# brand:init working output. The palette it generates is committed
+# (src/system/styles/generated/brand.css); the preview and audit are not.
+brand/preview.html
+brand/.brand-report.json
+
+# The trial site built to prove the template, in Phase 7.
+.trial/

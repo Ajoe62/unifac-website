@@ -1,0 +1,40 @@
+---
+/**
+ * A row of buttons, from data.
+ *
+ * Every call to action on the site used to be hand written anchors carrying
+ * their own class list, which is how `btn btn-gold btn-lg` and the trailing
+ * arrow span got copied 30 times. The first action is primary unless it says
+ * otherwise, because that is true on every page and stating it per button is
+ * how a page ends up with two primaries.
+ */
+import type { Action } from './types';
+
+interface Props {
+  actions: Action[];
+  large?: boolean;
+  style?: string;
+}
+
+const { actions, large = false, style } = Astro.props;
+
+const CLASS = {
+  gold: 'btn-gold',
+  ghost: 'btn-ghost',
+  brand: 'btn-brand',
+  outline: 'btn-outline',
+} as const;
+---
+<div class="cta" style={style}>
+  {actions.map((action, i) => {
+    const variant = action.variant ?? (i === 0 ? 'gold' : 'ghost');
+    const arrow = action.arrow ?? i === 0;
+    const big = action.large ?? large;
+    const cls = ['btn', CLASS[variant], big ? 'btn-lg' : null].filter(Boolean).join(' ');
+    return (
+      <a class={cls} href={action.href} rel={action.rel}>
+        {action.label}{arrow && <> <span class="arr">→</span></>}
+      </a>
+    );
+  })}
+</div>

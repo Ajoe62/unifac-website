@@ -1,0 +1,68 @@
+/* ==========================================================================
+   SURFACES
+
+   The ground a section sits on, as four named choices rather than 31 inline
+   `style="background:var(--surface-2)"` attributes scattered through the
+   pages. Those attributes hardwired the site's rhythm into markup: to see
+   whether two bands alternated correctly you had to read both pages.
+
+   A surface is not only a background. Putting a section on the brand colour
+   also decides what its heading, its body copy and its eyebrow must become,
+   and those four decisions travel together or the section is unreadable. That
+   is the whole reason this is a class and not a background property.
+   ========================================================================== */
+
+/* The page's own ground. Named so a spec can say it out loud. */
+.surface-base {
+  background: var(--surface);
+}
+
+/* One step down, for alternating bands. */
+.surface-alt {
+  background: var(--surface-2);
+}
+
+/* ---- On the brand colour ------------------------------------------------ */
+
+.surface-brand {
+  background: var(--brand);
+  color: var(--on-brand-2);
+}
+.surface-brand h2,
+.surface-brand h3,
+.surface-brand .sec-head h2 {
+  color: var(--on-brand-strong);
+}
+.surface-brand p,
+.surface-brand .sec-head p {
+  color: var(--on-brand-4);
+}
+.surface-brand .eyebrow {
+  color: var(--accent-300);
+}
+/* Outlined buttons on a dark ground take their edge from the ground, not from
+   --brand, which is now invisible against it. */
+.surface-brand .btn-outline {
+  border-color: rgb(255 255 255 / 0.5);
+  color: var(--on-brand-strong);
+}
+.surface-brand .btn-outline:hover {
+  background: rgb(255 255 255 / 0.12);
+  border-color: #fff;
+}
+
+/* ---- On the feature colour ---------------------------------------------- */
+
+.surface-feature {
+  background: var(--grad-feature);
+  color: var(--on-feature);
+}
+.surface-feature h2 {
+  color: #fff;
+}
+.surface-feature p {
+  color: var(--on-feature-2);
+}
+.surface-feature .eyebrow {
+  color: var(--accent-300);
+}

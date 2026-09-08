@@ -1,0 +1,174 @@
+---
+import Icon from '../system/components/Icon.astro';
+import Layout from '../layouts/Layout.astro';
+import { site, tel, mapsUrl, addressLine } from '../config/site';
+import Directions from '../system/blocks/Directions/Routes.astro';
+---
+<Layout
+  title={`Contact - ${site.name}`}
+  description="TODO One sentence for search results. How to reach the school."
+  active="contact"
+>
+
+<section class="page-hero">
+  <div class="wrap">
+    <p class="eyebrow">Contact Us</p>
+    <h1>We’d love to hear from you.</h1>
+    <p>Whether you’re enquiring about a place or arranging a visit, our door and our inbox are open.</p>
+  </div>
+</section>
+
+<section>
+  <div class="wrap contact-grid">
+    <div>
+      <p class="eyebrow">Reach the School</p>
+      <h2 style="font-size:clamp(1.7rem,3vw,2.3rem);margin:.5rem 0 1.4rem">Visit, call or email.</h2>
+      <div class="cinfo">
+        <div class="row">
+          <div class="ic"><Icon name="map-pin" size={22} stroke={1.7} /></div>
+          <div>
+            <h4>Address</h4>
+            <a href={mapsUrl} target="_blank" rel="noopener">{addressLine}</a>
+          </div>
+        </div>
+        <div class="row">
+          <div class="ic"><Icon name="phone" size={22} stroke={1.7} /></div>
+          <div>
+            <h4>Phone</h4>
+            {site.phones.map((phone, i) => <>{i > 0 && <br />}<a href={tel(i)}>{phone.display}</a></>)}
+          </div>
+        </div>
+        <div class="row">
+          <div class="ic"><Icon name="mail" size={22} stroke={1.7} /></div>
+          <div>
+            <h4>Email</h4>
+            <a href={`mailto:${site.email}`}>{site.email}</a>
+          </div>
+        </div>
+        <div class="row">
+          <div class="ic"><Icon name="clock" size={22} stroke={1.7} /></div>
+          <div>
+            <h4>Office Hours</h4>
+            <p>{site.officeHours}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <form class="cform" id="contactForm" data-mailto={site.email}>
+        <p class="eyebrow" style="margin-bottom:.4rem">Send a Message</p>
+        <label for="cf-name">Your name</label>
+        <input id="cf-name" name="name" type="text" placeholder="Jane Doe" required />
+        <label for="cf-email">Email address</label>
+        <input id="cf-email" name="email" type="email" placeholder="you@example.com" required />
+        <label for="cf-phone">Phone (optional)</label>
+        <input id="cf-phone" name="phone" type="tel" placeholder="0800 000 0000" />
+        <label for="cf-message">How can we help?</label>
+        <textarea id="cf-message" name="message" placeholder="Tell us about your child and what you’d like to know…" required></textarea>
+        <button class="btn btn-gold" type="submit">Send Message <span class="arr">→</span></button>
+      </form>
+
+      <!--
+        The form hands off to the visitor's mail app. That silently does nothing
+        on a device with no mail client configured (common on desktop), and the
+        visitor walks away believing the message was sent. This panel appears
+        after the handoff so there is always a way through.
+      -->
+      <div class="cform cf-fallback" id="cfFallback" hidden>
+        <h3>Did your mail app open?</h3>
+        <p>If it did, just press send: your message is already written. If nothing happened, this device has no mail app set up. Copy your message below and send it from wherever you normally read email.</p>
+        <label for="cf-copy">Your message</label>
+        <textarea id="cf-copy" readonly></textarea>
+        <div class="cf-actions">
+          <button class="btn btn-brand" type="button" id="cfCopy">Copy message</button>
+          <a class="btn btn-outline" href={tel(0)}>Call instead</a>
+        </div>
+        <p class="cf-addr">Send it to <strong>{site.email}</strong></p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<Directions surface="alt" />
+
+<section class="band">
+  <div class="wrap">
+    <p class="eyebrow" style="color:var(--accent-300)">Admissions Open</p>
+    <h2>Ready to take the next step?</h2>
+    <p>Applications for the 2026/2027 session are open across all stages.</p>
+    <div class="cta">
+      <a class="btn btn-gold btn-lg" href="/admissions">Explore Admissions <span class="arr">→</span></a>
+    </div>
+  </div>
+</section>
+
+<script>
+  const form = document.getElementById('contactForm');
+  // Read off the form rather than imported from config: this script is bundled
+  // and shipped to the browser, and pulling in site.ts would send the whole
+  // configuration, schema and all, to every visitor to save one string.
+  const ADDRESS = form?.dataset.mailto ?? '';
+  const fallback = document.getElementById('cfFallback');
+  const copyArea = document.getElementById('cf-copy');
+  const copyBtn = document.getElementById('cfCopy');
+
+  if (form) {
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const data = new FormData(form);
+      const name = (data.get('name') || '').toString();
+      const email = (data.get('email') || '').toString();
+      const phone = (data.get('phone') || '').toString();
+      const message = (data.get('message') || '').toString();
+
+      const plain = `Name: ${name}\nEmail: ${email}\nPhone: ${phone}\n\n${message}`;
+      const subject = encodeURIComponent(`Website enquiry from ${name}`);
+
+      // Mail clients drop everything past roughly 2000 characters in a mailto,
+      // so a long enquiry would arrive truncated with no warning. Past that,
+      // hand over just the subject and let the copy panel carry the message.
+      const encoded = encodeURIComponent(plain);
+      const useBody = encoded.length < 1500;
+      const href = useBody
+        ? `mailto:${ADDRESS}?subject=${subject}&body=${encoded}`
+        : `mailto:${ADDRESS}?subject=${subject}`;
+
+      if (copyArea) copyArea.value = plain;
+      window.location.href = href;
+
+      // There is no way to detect whether the mail app opened, so always reveal
+      // the fallback shortly after. On a device that did open one, the panel
+      // simply confirms what happened.
+      window.setTimeout(() => {
+        if (fallback) {
+          fallback.hidden = false;
+          fallback.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+      }, 900);
+    });
+  }
+
+  if (copyBtn && copyArea) {
+    copyBtn.addEventListener('click', async () => {
+      const done = (ok) => {
+        copyBtn.textContent = ok ? 'Copied ✓' : 'Press Ctrl+C to copy';
+        window.setTimeout(() => { copyBtn.textContent = 'Copy message'; }, 2500);
+      };
+      try {
+        await navigator.clipboard.writeText(copyArea.value);
+        done(true);
+      } catch {
+        // Clipboard API needs a secure context and permission; selecting the
+        // text is the reliable fallback on older Android browsers.
+        copyArea.removeAttribute('readonly');
+        copyArea.select();
+        copyArea.setSelectionRange(0, copyArea.value.length);
+        copyArea.setAttribute('readonly', '');
+        done(false);
+      }
+    });
+  }
+</script>
+
+</Layout>

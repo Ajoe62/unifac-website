@@ -1,0 +1,66 @@
+# The six things that must hold before a school site ships.
+#
+# Ordered cheapest first, so a contrast regression does not wait behind an
+# image pipeline. Every one of them has caught something real: the contrast
+# gate found two live WCAG failures on the day it was written.
+name: CI
+
+on:
+  push:
+    branches: [master, main]
+  pull_request:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # The system guard diffs against the base branch, so it needs more
+          # than the single commit a shallow clone gives it.
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      # Does the palette this site actually builds with put readable text in
+      # front of a reader? Runs against what is committed, not against what
+      # brand:init happened to generate weeks ago.
+      - name: Contrast gate
+        run: npm run brand:check
+
+      # Has a client repo edited files that are shared with every other site?
+      - name: System guard
+        run: npm run check:system
+        env:
+          SYSTEM_GUARD_BASE: origin/${{ github.base_ref || 'master' }}
+
+      # Config schemas are parsed at module load, so a missing phone number or
+      # an unknown icon name fails here rather than at launch.
+      - name: Build
+        run: npm run build
+
+      # A feature flag removes a page's nav entry, its footer link and its
+      # route. It cannot remove a link somebody wrote inside a sentence, and
+      # that is the failure this template is most likely to ship: not a broken
+      # build, a broken paragraph.
+      - name: Internal links
+        run: npm run check:links
+
+      # Canonical links and share cards are invisible in a browser and visible
+      # in every share. This site ran for months with none of them, and the
+      # only symptom was that links pasted into WhatsApp came out as bare grey
+      # URLs, seen by everybody except the people who could fix it.
+      - name: Metadata
+        run: npm run check:meta
+
+      # A template must ship placeholder copy or its pages are empty boxes.
+      # That copy is the most dangerous thing in the repo, because plausible
+      # prose on a well designed page reads as finished. Skipped in the
+      # template itself, enforced in every site built from it.
+      - name: Placeholder copy
+        run: npm run check:content

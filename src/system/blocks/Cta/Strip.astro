@@ -1,0 +1,26 @@
+---
+/**
+ * A lighter call to action: copy on the left, buttons on the right. For
+ * pointing at something mid page without stopping the page the way the band
+ * deliberately does.
+ */
+import type { Action } from '../types';
+import Actions from '../Actions.astro';
+
+interface Props {
+  eyebrow?: string;
+  title: string;
+  body?: string;
+  actions?: Action[];
+}
+
+const { eyebrow, title, body, actions = [] } = Astro.props;
+---
+<div class="wrap">
+  <div>
+    {eyebrow && <p class="eyebrow">{eyebrow}</p>}
+    <h2>{title}</h2>
+    {body && <p>{body}</p>}
+  </div>
+  {actions.length > 0 && <Actions actions={actions} />}
+</div>

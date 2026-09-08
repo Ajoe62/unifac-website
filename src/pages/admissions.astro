@@ -1,0 +1,161 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { site, tel, phoneLabel, mailto } from '../config/site';
+import Facilities from '../system/blocks/Feature/Grid.astro';
+import Directions from '../system/blocks/Directions/Routes.astro';
+import { portalHref } from '../config/integrations';
+
+// The entrance assessment is sat on ResultPeak at the school's own address, so
+// the school is already selected. Null out of season, and the whole callout
+// disappears rather than sending an applicant into an empty sign-in.
+const entranceHref = portalHref('entrance');
+---
+<Layout
+  title={`Admissions - ${site.name}`}
+  description="TODO One sentence for search results. Which session is open and which year groups."
+  active="admissions"
+>
+
+<section class="page-hero">
+  <div class="wrap">
+    <p class="eyebrow">Admissions 2026 / 2027</p>
+    <h1>Come and see where your child will grow.</h1>
+    <p>TODO Which year groups are open, and what a family should do first.</p>
+    <div class="cta" style="margin-top:1.8rem">
+      <a class="btn btn-gold btn-lg" href="/contact">Start an Enquiry <span class="arr">→</span></a>
+      <a class="btn btn-ghost btn-lg" href={tel(1)}>Call {phoneLabel(1)}</a>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="sec-head"><p class="eyebrow">How to Apply</p><h2>Three simple steps to a place.</h2><p>We keep admissions warm and personal. Here is how the journey usually goes.</p></div>
+    <div class="steps">
+      <div class="step">
+        <h3>Enquire</h3>
+        <p>Send us a message or give us a call with your child’s age and the stage you’re interested in. We’ll answer your questions and share what’s available. You can also apply online straight away, without speaking to us first.</p>
+      </div>
+      <div class="step">
+        <h3>Visit</h3>
+        <p>TODO What a school tour involves, and who a family will meet.</p>
+      </div>
+      <div class="step">
+        <h3>Enrol</h3>
+        <p>Apply online, sit the entrance assessment, and we’ll guide you through registration so your child is ready to start with confidence.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+{entranceHref && (
+  <section class="slim">
+    <div class="wrap">
+      <div class="entrance">
+        <div>
+          <p class="eyebrow">Apply Online</p>
+          <h2>Register for the entrance assessment.</h2>
+          <p>Applications for Primary and Secondary are completed online, and you can start one yourself right now. Fill in your child’s details, the class you are applying into, and a phone number or email address so we can reach you with a decision.</p>
+          <p>The form issues an <strong>application number</strong> and <strong>access code</strong> the moment you finish. Print the slip, or write both down: they are how you check the decision later, and how your child signs back in.</p>
+          <p class="entrance-note">Nothing is needed from us before you begin. We send an exam PIN separately, once a sitting is scheduled.</p>
+        </div>
+        <div class="entrance-act">
+          <a class="btn btn-brand" href={entranceHref} rel="noopener">Begin an Application <span class="arr">→</span></a>
+          <a class="btn btn-outline" href="/contact">Ask a Question</a>
+        </div>
+      </div>
+    </div>
+  </section>
+)}
+
+<section style="background:var(--surface-2)">
+  <div class="wrap two-col">
+    <div class="lead-copy">
+      <p class="eyebrow">Good to Know</p>
+      <h2 style="font-size:clamp(1.7rem,3vw,2.3rem);margin:.5rem 0 1.1rem">What to expect.</h2>
+      <p><strong>Stages open:</strong> Early Years (ages 2–5), Primary (ages 5–11) and Secondary (ages 11–16).</p>
+      <p><strong>Session:</strong> Enrolment for the 2026/2027 academic session is now open across all stages.</p>
+      <p><strong>Class sizes:</strong> We keep classes small and focused, so places in each year group are limited, early enquiries are encouraged.</p>
+      <p><strong>Facilities:</strong> well equipped Biology, Chemistry, Physics and Computer laboratories, a music studio, a library, an art and craft studio and sports facilities.</p>
+      <p><strong>What to bring to a visit:</strong> just yourselves. We’ll walk you through everything else in person.</p>
+    </div>
+    <div class="cform" style="align-self:start">
+      <h3 style="font-family:var(--font-display);font-size:1.4rem;margin:0 0 .3rem">Ready to begin?</h3>
+      <p style="color:var(--muted);margin:0 0 1.2rem;font-size:.98rem">Reach us directly and we’ll get straight back to you.</p>
+      <a class="btn btn-brand" style="width:100%;margin-bottom:.7rem" href={mailto('Admissions Enquiry')}>Email an Enquiry</a>
+      <a class="btn btn-outline" style="width:100%" href={tel(0)}>Call {phoneLabel(0)}</a>
+    </div>
+  </div>
+</section>
+
+<Facilities
+  title="What your child will have access to."
+  intro="Come and see them on a visit: well equipped laboratories, a music studio, a library, an art and craft studio and sports facilities."
+/>
+
+<Directions
+  surface="alt"
+  title="Finding us on the day."
+  intro="Before you set out, here are the two landmark routes to the school. Save them for your visit."
+/>
+
+<section class="band">
+  <div class="wrap">
+    <p class="eyebrow" style="color:var(--accent-300)">We’d love to meet you</p>
+    <h2>Book a visit to {site.shortName}.</h2>
+    <p>See the classrooms, meet the teachers, and picture your child here. We’ll make time for you.</p>
+    <div class="cta">
+      <a class="btn btn-gold btn-lg" href="/contact">Arrange a Visit <span class="arr">→</span></a>
+    </div>
+  </div>
+</section>
+
+</Layout>
+
+<style>
+  /* Sits on the same white background as the steps above it, so it needs its
+     own border to read as a distinct action rather than more prose. */
+  .entrance {
+    display: grid;
+    grid-template-columns: 1.35fr 0.65fr;
+    gap: 2.4rem;
+    align-items: center;
+    background: var(--card);
+    border: var(--border-weight) solid var(--line);
+    border-left: 4px solid var(--accent);
+    border-radius: var(--radius-lg);
+    padding: 2.2rem 2rem;
+    box-shadow: var(--shadow-form);
+  }
+  .entrance h2 {
+    font-size: clamp(1.5rem, 2.6vw, 2rem);
+    margin: 0.4rem 0 0.9rem;
+  }
+  .entrance p {
+    color: var(--muted);
+    font-size: 1.04rem;
+    margin: 0 0 0.8rem;
+    max-width: 60ch;
+  }
+  .entrance-note {
+    font-size: 0.95rem !important;
+    color: var(--brand) !important;
+    font-weight: 600;
+    margin: 0 !important;
+  }
+  .entrance-act {
+    display: flex;
+    flex-direction: column;
+    gap: 0.7rem;
+  }
+  .entrance-act .btn {
+    width: 100%;
+  }
+  @media (max-width: 820px) {
+    .entrance {
+      grid-template-columns: 1fr;
+      gap: 1.6rem;
+      padding: 1.8rem 1.4rem;
+    }
+  }
+</style>
