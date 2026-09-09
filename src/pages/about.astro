@@ -7,22 +7,24 @@ import MediaText from '../system/blocks/Media/Text.astro';
 import Facilities from '../system/blocks/Feature/Grid.astro';
 import { Image } from 'astro:assets';
 import headPhoto from '../assets/images/head-of-school.jpg';
-import storyPhoto from '../assets/images/community.jpg';
+// A real photograph of the school, not a placeholder. It is 873px wide, which
+// is enough for this block and not enough for a hero.
+import storyPhoto from '../assets/images/signboard.jpg';
 
 // The same three values the homepage shows, from the same files.
 const values = (await getCollection('values')).sort((a, b) => a.data.order - b.data.order);
 ---
 <Layout
   title={`About - ${site.name}`}
-  description="TODO One sentence for search results. Who the school is, where it is, and what it teaches."
+  description="Unifac Group of Schools teaches nursery, primary and secondary pupils on three campuses in Benin City, Edo State, following the Nigerian national curriculum."
   active="about"
 >
 
 <section class="page-hero">
   <div class="wrap">
     <p class="eyebrow">About the School</p>
-    <h1>TODO The promise this school makes, in six words.</h1>
-    <p>TODO Two sentences under the headline. Where the school is, and what a parent should feel walking in.</p>
+    <h1>Knowledge from God, and the work to match it.</h1>
+    <p>We teach children from nursery through to senior secondary on three campuses across Benin City. Our motto is on the crest at every gate, and it is meant plainly: what a child learns here is a gift, and we expect them to carry it well.</p>
   </div>
 </section>
 
@@ -34,7 +36,7 @@ const values = (await getCollection('values')).sort((a, b) => a.data.order - b.d
     <div>
       <p class="eyebrow">Welcome to {site.shortName}</p>
       <h2>A warm word from the Head of School.</h2>
-      <blockquote>“TODO One or two sentences in the head teacher’s own voice. Not marketing copy: something they would actually say to a parent across a desk.”</blockquote>
+      <blockquote>“TODO The Head of School’s own words. Left unwritten on purpose: this is attributed to a person, so it is theirs to say and not ours to draft.”</blockquote>
       <div class="signoff">The Head of School<small>{site.name}</small></div>
     </div>
   </div>
@@ -42,14 +44,14 @@ const values = (await getCollection('values')).sort((a, b) => a.data.order - b.d
 
 <MediaText
   image={storyPhoto}
-  alt="Pupils celebrating together"
+  alt="The Unifac Group of Schools signboard, reading Nursery, Primary, Secondary"
   eyebrow="Our Story"
-  title="TODO The story behind the name, as a headline."
+  title="Three campuses, one school."
   reverse={true}
 >
-  <p>TODO Why the school was founded, and by whom. One paragraph.</p>
-  <p>TODO Where the school is and which curriculum it teaches at each stage. Be specific: this is the paragraph parents read twice.</p>
-  <p>TODO What the school teaches beyond the syllabus.</p>
+  <p>TODO Why the school was founded, in what year, and by whom. One paragraph, and nobody outside the school can write it.</p>
+  <p>We teach on three campuses in Benin City: the head office at Oliha Quarters, a second campus at Evbuotubu Quarters by Aigbangbe Junction, and Ogbomwan Campus out at Ugbiyoko Quarters. All three follow the Nigerian national curriculum, from the pre-primary years through Primary 1 to 6, then JSS 1 to 3 for the Basic Education Certificate, and SSS 1 to 3 for the WASSCE and NECO examinations.</p>
+  <p>TODO What the school teaches beyond the syllabus: clubs, sport, music, service, whatever a child here does that is not on a timetable.</p>
   <div class="cta">
     <a class="btn btn-brand" href="/admissions">Explore Admissions <span class="arr">→</span></a>
     <a class="btn btn-outline" href="/contact">Arrange a Visit</a>
@@ -58,7 +60,7 @@ const values = (await getCollection('values')).sort((a, b) => a.data.order - b.d
 
 <section class="values" style="background:var(--surface-2)">
   <div class="wrap">
-    <div class="sec-head"><p class="eyebrow">Our Promise</p><h2>TODO A heading for the three values below.</h2><p>TODO One sentence introducing them. The values themselves live in src/content/values/.</p></div>
+    <div class="sec-head"><p class="eyebrow">Our Promise</p><h2>Three commitments, on our crest and in our classrooms.</h2><p>The open book, the ladder and the cap are not decoration. They name what we set out to give every child who joins us.</p></div>
     <div class="values-grid" style="display:grid;grid-template-columns:repeat(3,1fr);gap:1.4rem;margin-top:2.6rem">
       {values.map((value) => (
         <div class="vcard">
@@ -72,15 +74,15 @@ const values = (await getCollection('values')).sort((a, b) => a.data.order - b.d
 </section>
 
 <Facilities
-  title="TODO A heading for the facilities below."
+  title="TODO A heading for the facilities below, once the list is the real one."
   intro="TODO One sentence on what the campus gives pupils. The facilities themselves live in src/content/facilities/."
 />
 
 <section class="band">
   <div class="wrap">
     <p class="eyebrow" style="color:var(--accent-300)">Admissions Open</p>
-    <h2>TODO A closing invitation.</h2>
-    <p>TODO Which session is open, which year groups, and how to arrange a visit.</p>
+    <h2>Come and see a campus.</h2>
+    <p>TODO Which session is open, which year groups have places, and how a parent arranges a visit.</p>
     <div class="cta">
       <a class="btn btn-gold btn-lg" href="/admissions">Start an Enquiry <span class="arr">→</span></a>
       <a class="btn btn-ghost btn-lg" href="/contact">Contact the School</a>

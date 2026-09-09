@@ -24,15 +24,15 @@ const programmes = (await getCollection('programmes')).sort((a, b) => a.data.ord
 ---
 <Layout
   title={`Academics-${site.name}`}
-  description="TODO One sentence for search results. Which curriculum, at which stages, and where."
+  description="The Nigerian national curriculum at Unifac Group of Schools: nursery, primary, junior and senior secondary, taught across three campuses in Benin City."
   active="academics"
 >
 
 <section class="page-hero">
   <div class="wrap">
     <p class="eyebrow">Academics</p>
-    <h1>TODO A headline for the academic path.</h1>
-    <p>The British EYFS with Montessori in the Nursery, then the Nigerian Curriculum enriched with Cambridge from Primary to Senior Secondary, taught by caring teachers in small, focused classes.</p>
+    <h1>One path, from the first day to the final certificate.</h1>
+    <p>The Nigerian national curriculum at every stage, from the pre-primary years through Primary 1 to 6, then JSS 1 to 3 for the Basic Education Certificate and SSS 1 to 3 for the WASSCE and NECO examinations.</p>
   </div>
 </section>
 
@@ -40,7 +40,7 @@ const programmes = (await getCollection('programmes')).sort((a, b) => a.data.ord
   image={introPhoto}
   alt="Learners in a bright classroom"
   eyebrow="Our Approach"
-  title="TODO A headline for the teaching approach."
+  title="How a lesson runs here."
 >
   <p>TODO How lessons actually run here. Class sizes, how a child is stretched.</p>
   <p>TODO What the school pairs academic standards with.</p>
@@ -69,23 +69,23 @@ const programmes = (await getCollection('programmes')).sort((a, b) => a.data.ord
   surface="alt"
 >
   <p>TODO What sits at the heart of this school beyond the timetable.</p>
-  <p>Specialist lessons in the arts, science and sport round out a broad, balanced education for every stage.</p>
+  <p>TODO Which specialist lessons the school actually runs: arts, sport, music, anything taught outside the core syllabus.</p>
   <p>TODO How work carries home. If the school uses the portal, link it here; if not, delete this paragraph and switch off the portal feature.</p>
 </MediaText>
 
 <section>
   <div class="wrap">
-    <div class="sec-head"><p class="eyebrow">Why {site.shortName}</p><h2>How we teach.</h2><p>British rigour, small classes, and a genuine knowledge of every child.</p></div>
+    <div class="sec-head"><p class="eyebrow">Why {site.shortName}</p><h2>How we teach.</h2><p>Three things we hold to, on all three campuses.</p></div>
     <div class="feat-grid">
       <div class="feat">
         <div class="ic"><Icon name="book" /></div>
-        <h3>EYFS, Cambridge and the National Curriculum</h3>
-        <p>Internationally recognised standards enriching the Nigerian Curriculum, so your child is at home here and recognised anywhere.</p>
+        <h3>The National Curriculum, Taught Fully</h3>
+        <p>The BECE at the end of JSS 3, the WASSCE and NECO at the end of SSS 3. The certificates a Nigerian university asks for, taught to the national syllabus.</p>
       </div>
       <div class="feat">
         <div class="ic"><Icon name="users" /></div>
-        <h3>Small, Focused Classes</h3>
-        <p>Low pupil-to-teacher ratios mean lessons move at the right pace and no child is left behind.</p>
+        <h3>Three Campuses, One Standard</h3>
+        <p>Whichever campus a child sits on, the syllabus, the terms and the examinations are the same. A family moving between them loses nothing.</p>
       </div>
       <div class="feat">
         <div class="ic"><Icon name="shield-check" /></div>
@@ -99,14 +99,14 @@ const programmes = (await getCollection('programmes')).sort((a, b) => a.data.ord
 <Facilities
   surface="alt"
   title="Learning you can put your hands on."
-  intro="Well equipped Biology, Chemistry, Physics and Computer laboratories, a music studio, a stocked library and sports facilities, so lessons are practised, not only taught."
+  intro="TODO One sentence on the facilities, once src/content/facilities lists the ones Unifac actually has."
 />
 
 <section class="band">
   <div class="wrap">
     <p class="eyebrow" style="color:var(--accent-300)">Admissions Open</p>
     <h2>Find the right stage for your child.</h2>
-    <p>TODO A closing line inviting an enquiry about a specific year group.</p>
+    <p>Tell us the year group you have in mind and we will tell you what is available, on which campus.</p>
     <div class="cta">
       <a class="btn btn-gold btn-lg" href={applyHref} {...applyAttrs}>Apply for a Place <span class="arr">→</span></a>
       <a class="btn btn-ghost btn-lg" href="/contact">Ask a Question</a>

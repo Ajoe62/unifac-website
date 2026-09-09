@@ -54,11 +54,14 @@ const heroSlides: Slide[] = [
   { src: hero4, alt: 'Confident young learners' },
 ];
 
+// Four facts, each one checkable. The template shipped "EYFS + Cambridge"
+// here, which is the curriculum of the school this template was extracted
+// from and not the one Unifac teaches.
 const stats: Stat[] = [
-  { value: 'EYFS + Cambridge', label: 'Curriculum' },
-  { value: 'Nursery to SS3', label: 'Every Stage' },
-  { value: 'Benin City', label: 'Edo State' },
-  { value: 'Open', label: 'Admissions 2026' },
+  { value: 'Nursery to SSS 3', label: 'Every Stage' },
+  { value: 'Three Campuses', label: 'Across Benin City' },
+  { value: 'Nigerian Curriculum', label: 'BECE, WASSCE & NECO' },
+  { value: 'Knowledge from God', label: 'Our Motto' },
 ];
 
 const heroActions: Action[] = [
@@ -72,7 +75,7 @@ export const home: SectionSpec[] = [
     variant: 'carousel',
     props: {
       slides: heroSlides,
-      headline: 'Where character takes root and <em>excellence</em> grows.',
+      headline: 'Nursery to Senior Secondary, across <em>three campuses</em> in Benin City.',
       actions: heroActions,
     },
   },
@@ -86,8 +89,11 @@ export const home: SectionSpec[] = [
       alt: 'A teacher supporting a pupil in class',
       eyebrow: `Welcome to ${site.shortName}`,
       title: 'An education that shapes the whole child.',
+      // A quote is attributed to a person, so this one is left unwritten rather
+      // than drafted. The template carried the previous school's, which spoke
+      // about the cedar it was named for.
       quote:
-        '“Like the cedar it is named for, our school is built to give children deep roots and room to rise: grounded in strong values, reaching for real academic excellence.”',
+        'TODO The Head of School’s own words, in one or two sentences. Attributed, so nobody else can write it.',
       signature: 'The Head of School',
       signatureRole: site.name,
       actions: [{ label: 'Read our story', href: '/about', variant: 'brand' }] satisfies Action[],
@@ -100,7 +106,7 @@ export const home: SectionSpec[] = [
       eyebrow: 'Our Promise',
       title: 'Three commitments, on our crest and in our classrooms.',
       intro:
-        'The emblems on our shield are not decoration, they name what we set out to give every child who joins us.',
+        'The open book, the ladder and the cap on our crest are not decoration. They name what we set out to give every child who joins us.',
     },
   },
   {
@@ -108,8 +114,11 @@ export const home: SectionSpec[] = [
     variant: 'grid',
     surface: 'alt',
     props: {
+      // The template listed laboratories, a music studio and sports facilities
+      // here. Those are checkable claims about a specific school, and no one
+      // has confirmed which of them Unifac has.
       intro:
-        'Well equipped Biology, Chemistry, Physics and Computer laboratories, a music studio, sports facilities and more: the tools that turn lessons into real experience.',
+        'TODO One sentence naming the facilities Unifac actually has, once the list in src/content/facilities is the real one.',
     },
   },
   {
