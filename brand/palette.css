@@ -19,40 +19,40 @@
 :root {
   /* ---- Core roles ------------------------------------------------------ */
 
-  /** Primary. Dark sections, solid buttons, icon glyphs. #25436b */
-  --brand-rgb: 37 67 107;
-  /** Deepest step of the primary. Utility bar and footer ground. #07254a */
-  --brand-900-rgb: 7 37 74;
-  /** Primary lightened, for placeholder tints behind loading images. #5979a5 */
-  --brand-300-rgb: 89 121 165;
-  /** Accent. Eyebrows, nav underlines, the primary call to action. #cda426 */
-  --accent-rgb: 205 164 38;
-  /** Accent lifted for dark grounds, and the focus ring. #f2cb5f */
-  --accent-300-rgb: 242 203 95;
-  /** Accent lightened, placeholder tint. #ddb43c */
-  --accent-200-rgb: 221 180 60;
-  /** Accent darkened, placeholder tint. #856800 */
-  --accent-700-rgb: 133 104 0;
-  /** The accent darkened until it is legible as TEXT on the page ground. Eyebrows, tags and field labels. Fills and anything on a dark ground keep --accent. #876900 */
-  --accent-text-rgb: 135 105 0;
-  /** Under the accent button only. A shadow in the accent's own colour reads as a halo and washes the edge out, so the drop colour is the darker relative. #675000 */
-  --accent-deep-rgb: 103 80 0;
-  /** The one high contrast band that is neither brand nor accent. #4d5856 */
-  --feature-rgb: 77 88 86;
-  /** Feature, deepened for the band's gradient tail. #333d3b */
-  --feature-900-rgb: 51 61 59;
-  /** Feature lightened, placeholder tint. #798585 */
-  --feature-300-rgb: 121 133 133;
-  /** Page ground. Carries the accent's hue at very low chroma, which is why it reads warm rather than grey. #f6f2e8 */
-  --surface-rgb: 246 242 232;
-  /** Alternate band ground, one step down from the page. #eee8da */
-  --surface-2-rgb: 238 232 218;
-  /** Body text. The brand hue taken almost to black, never a neutral. #151b23 */
-  --ink-rgb: 21 27 35;
-  /** Secondary text. The brand hue at mid lightness, low chroma. #5d646e */
-  --muted-rgb: 93 100 110;
-  /** Photo overlays. The brand hue at near black, so scrims stay in family. #030915 */
-  --scrim-rgb: 3 9 21;
+  /** Primary. Dark sections, solid buttons, icon glyphs. #051e5a */
+  --brand-rgb: 5 30 90;
+  /** Deepest step of the primary. Utility bar and footer ground. #000a3d */
+  --brand-900-rgb: 0 10 61;
+  /** Primary lightened, for placeholder tints behind loading images. #254381 */
+  --brand-300-rgb: 37 67 129;
+  /** Accent. Eyebrows, nav underlines, the primary call to action. #c99638 */
+  --accent-rgb: 201 150 56;
+  /** Accent lifted for dark grounds, and the focus ring. #efbd68 */
+  --accent-300-rgb: 239 189 104;
+  /** Accent lightened, placeholder tint. #d9a64a */
+  --accent-200-rgb: 217 166 74;
+  /** Accent darkened, placeholder tint. #855d00 */
+  --accent-700-rgb: 133 93 0;
+  /** The accent darkened until it is legible as TEXT on the page ground. Eyebrows, tags and field labels. Fills and anything on a dark ground keep --accent. #936700 */
+  --accent-text-rgb: 147 103 0;
+  /** Under the accent button only. A shadow in the accent's own colour reads as a halo and washes the edge out, so the drop colour is the darker relative. #674700 */
+  --accent-deep-rgb: 103 71 0;
+  /** The one high contrast band that is neither brand nor accent. #9b0d19 */
+  --feature-rgb: 155 13 25;
+  /** Feature, deepened for the band's gradient tail. #70000b */
+  --feature-900-rgb: 112 0 11;
+  /** Feature lightened, placeholder tint. #cf4f26 */
+  --feature-300-rgb: 207 79 38;
+  /** Page ground. Carries the accent's hue at very low chroma, which is why it reads warm rather than grey. #f8f2e8 */
+  --surface-rgb: 248 242 232;
+  /** Alternate band ground, one step down from the page. #f0e7da */
+  --surface-2-rgb: 240 231 218;
+  /** Body text. The brand hue taken almost to black, never a neutral. #161b23 */
+  --ink-rgb: 22 27 35;
+  /** Secondary text. The brand hue at mid lightness, low chroma. #5e636e */
+  --muted-rgb: 94 99 110;
+  /** Photo overlays. The brand hue at near black, so scrims stay in family. #040915 */
+  --scrim-rgb: 4 9 21;
 
   /* ---- Text ramps ------------------------------------------------------ */
   /*
@@ -62,25 +62,25 @@
    */
 
   /** Headings on a brand ground. */
-  --on-brand-strong: #faf7ee;
+  --on-brand-strong: #fbf6ef;
   /** Body copy on a brand ground. */
-  --on-brand: #f0ede3;
+  --on-brand: #f2ece3;
   /** Utility bar, and body copy on the mid brand sections. */
-  --on-brand-2: #e2ded4;
+  --on-brand-2: #e3ddd4;
   /** Lead paragraphs and mottos on a brand ground. */
-  --on-brand-3: #d3cfc5;
+  --on-brand-3: #d4cec5;
   /** Supporting copy inside cards on a brand ground. */
-  --on-brand-4: #c3bfb5;
+  --on-brand-4: #c4beb5;
   /** Footer prose. */
-  --on-brand-5: #9e9b94;
+  --on-brand-5: #9f9b94;
   /** Footer fine print, the quietest legible step. */
-  --on-brand-6: #8e8c86;
+  --on-brand-6: #83807a;
   /** Body copy on the feature band. */
-  --on-feature: #e2f5f1;
+  --on-feature: #feebe9;
   /** Secondary copy on the feature band. */
-  --on-feature-2: #c4e4de;
+  --on-feature-2: #f3d4d1;
   /** Text on an accent fill. Chosen by contrast, not by preference. */
-  --on-accent: #181000;
+  --on-accent: #1b0f00;
 
   /* ---- Type ------------------------------------------------------------ */
   /*

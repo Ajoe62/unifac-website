@@ -2,5 +2,8 @@
   "_comment": "Anything under overrides beats what the logo says and survives re-running brand:init. Use hex strings. brand, accent and feature are SOURCE colours: their relatives (accent-300, accent-deep, accent-text, surface, ink) are derived FROM them, so pinning one of those three corrects everything downstream too.",
   "_why": "brand:init reads a logo and guesses. It guesses well and it is still a guess: it cannot know which colour a school considers its second, only which colours the image contains. Look at brand/preview.html, then pin the two or three it got wrong here. Commit this file. Without it, the next person to clone the repo and run brand:init repaints the site.",
   "preset": "classic-institutional",
-  "overrides": {}
+  "overrides": {
+    "accent": "#c99638",
+    "feature": "#9b0d19"
+  }
 }

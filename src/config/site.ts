@@ -159,13 +159,13 @@ const config = {
   shortName: 'Unifac',
   descriptor: 'School',
 
-  domain: 'www.example.com',
+  domain: 'unifacsch.com.ng',
   locale: 'en',
   ogLocale: 'en_NG',
 
   logo: {
     src: '/logo.png',
-    alt: 'Unifac crest',
+    alt: 'Unifac Group of Schools crest',
   },
 
   address: {
