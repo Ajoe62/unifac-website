@@ -179,10 +179,16 @@ const SiteSchema = z.object({
 /**
  * The three campuses, in the order the school lists them.
  *
+ * Oliha is the head office, so it is first and `address` points at it.
+ *
  * `district` is left empty throughout: the LGA for each quarter was not given,
  * and an LGA guessed from a neighbourhood name is the kind of wrong that reads
- * as authoritative. `mapsQuery` is a construction from the address and has NOT
- * been checked against Google Maps yet; whoever checks it owns it.
+ * as authoritative.
+ *
+ * Every `mapsQuery` ends "Edo State, Nigeria" where the displayed address stops
+ * at the state. Benin City geocodes to the Republic of Benin often enough that
+ * the country is worth the words here, and this string is never read by a
+ * person: it exists only to be handed to Google Maps.
  */
 const campuses = [
   {
@@ -195,7 +201,7 @@ const campuses = [
     region: 'Edo State',
     country: 'Nigeria',
     short: 'Oliha Quarters, Benin City',
-    mapsQuery: 'TODO verify in Google Maps: Ribway Close, Oliha Quarters, Benin City',
+    mapsQuery: '1 Ribway Close, 2nd Uzama Street, Oliha Quarters, Benin City, Edo State, Nigeria',
     phone: { display: '0913 715 7221', dial: '+2349137157221' },
     whatsapp: { display: '0913 715 7252', dial: '+2349137157252' },
   },
@@ -209,7 +215,7 @@ const campuses = [
     region: 'Edo State',
     country: 'Nigeria',
     short: 'Evbuotubu Quarters, Benin City',
-    mapsQuery: 'TODO verify in Google Maps: Ikwebor Street, Evbuotubu Quarters, Benin City',
+    mapsQuery: '2 Ikwebor Street, 2nd Power Line, Evbuotubu Quarters, Benin City, Edo State, Nigeria',
     phone: { display: '0913 715 7247', dial: '+2349137157247' },
   },
   {
@@ -222,7 +228,7 @@ const campuses = [
     region: 'Edo State',
     country: 'Nigeria',
     short: 'Ugbiyoko Quarters, Benin City',
-    mapsQuery: 'TODO verify in Google Maps: Upper Ekenwan Road, Ugbiyoko Quarters, Benin City',
+    mapsQuery: 'Upper Ekenwan Road, Ugbiyoko Quarters, Benin City, Edo State, Nigeria',
     phone: { display: '0915 078 3897', dial: '+2349150783897' },
   },
 ];
@@ -242,10 +248,9 @@ const config = {
   },
 
   /**
-   * The head office, and the address the footer, the utility bar and the
-   * contact page speak with. ASSUMED to be Campus 1 because it is the one the
-   * school listed first; change this index if the head office is elsewhere and
-   * everything downstream follows.
+   * The head office, and the address the footer, the utility bar and the page
+   * titles speak with. Oliha, confirmed by the school. It is an index into the
+   * array rather than a second copy, so moving the head office is one edit.
    */
   address: campuses[0],
   campuses,
@@ -253,7 +258,7 @@ const config = {
   /** One line per campus, in campus order. */
   phones: campuses.map((campus) => campus.phone),
   email: 'unifacsch@gmail.com',
-  officeHours: 'TODO: office hours, as the school would tell a parent',
+  officeHours: 'Monday - Friday, 8:00am - 4:00pm',
 
   defaultTitle: 'Unifac Group of Schools - Benin City',
   defaultDescription:
