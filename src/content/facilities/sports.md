@@ -1,6 +1,6 @@
 ---
 title: 'Sports Facilities'
-summary: 'TODO What pupils actually do in here. Delete this file if the school does not have one.'
+summary: 'Space to play, inter-house competition, and the ordinary business of running about between lessons.'
 icon: 'ball'
 order: 6
 ---

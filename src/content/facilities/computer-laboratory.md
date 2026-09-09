@@ -1,6 +1,6 @@
 ---
 title: 'Computer Laboratory'
-summary: 'TODO What pupils actually do in here. Delete this file if the school does not have one.'
+summary: 'Where pupils meet a keyboard properly, work through the computer studies syllabus, and sit the practical papers that now expect a screen.'
 icon: 'computer'
 order: 2
 ---

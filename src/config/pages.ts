@@ -89,12 +89,11 @@ export const home: SectionSpec[] = [
       alt: 'A teacher supporting a pupil in class',
       eyebrow: `Welcome to ${site.shortName}`,
       title: 'An education that shapes the whole child.',
-      // A quote is attributed to a person, so this one is left unwritten rather
-      // than drafted. The template carried the previous school's, which spoke
-      // about the cedar it was named for.
+      // The school's voice rather than a named person's, because there is no
+      // quote from the Head yet and inventing one puts words in a real mouth.
       quote:
-        'TODO The Head of School’s own words, in one or two sentences. Attributed, so nobody else can write it.',
-      signature: 'The Head of School',
+        '“Three campuses, one syllabus, and the same expectations at each gate. What a child learns here is a gift, and we teach them to carry it well.”',
+      signature: `The ${site.shortName} Team`,
       signatureRole: site.name,
       actions: [{ label: 'Read our story', href: '/about', variant: 'brand' }] satisfies Action[],
     },
@@ -114,11 +113,8 @@ export const home: SectionSpec[] = [
     variant: 'grid',
     surface: 'alt',
     props: {
-      // The template listed laboratories, a music studio and sports facilities
-      // here. Those are checkable claims about a specific school, and no one
-      // has confirmed which of them Unifac has.
       intro:
-        'TODO One sentence naming the facilities Unifac actually has, once the list in src/content/facilities is the real one.',
+        'Science and computer laboratories, a library, a music studio, an art room and space to play: the places where a lesson stops being something read and starts being something done.',
     },
   },
   {
@@ -136,16 +132,10 @@ export const home: SectionSpec[] = [
       ] satisfies Action[],
     },
   },
-  {
-    block: 'cards',
-    variant: 'grid3',
-    props: {
-      limit: 3,
-      eyebrow: 'News & Events',
-      title: `Life at ${site.shortName}.`,
-      action: { label: 'View all news', href: '/news', variant: 'brand' } satisfies Action,
-    },
-  },
+  // The news grid is gone with the news flag. The block itself is fine; it was
+  // its "View all news" action that pointed at a route features.ts had just
+  // removed, which is the dead link check:links exists to catch. Restore this
+  // entry when news comes back on.
   {
     block: 'cta',
     variant: 'band',
@@ -154,7 +144,7 @@ export const home: SectionSpec[] = [
       eyebrow: 'Admissions Open',
       title: 'Come and see where your child will grow.',
       body:
-        'TODO The closing pitch. Which session is open, which year groups, and what a visit involves.',
+        'Enquiries are open for every stage, nursery through to SSS 3, on all three campuses. Tell us the year group and we will tell you what is available, and when you can come and see it for yourself.',
       actions: [
         { label: 'Start an Enquiry', href: '/admissions' },
         { label: 'Contact the School', href: '/contact' },

@@ -65,14 +65,17 @@ const config = {
       name: 'ResultPeak',
       role: "the school's assessment and results system",
       origin: `https://portal.${apexDomain}`,
-      live: true,
+      // Not pointed at a running host yet. Until the school says otherwise the
+      // portal cards render as "opening soon" rather than walking a child into
+      // a subdomain that does not resolve.
+      live: false,
     },
     /** Lessons, summaries, practice questions and assignments. */
     jdsmartlearn: {
       name: 'JDSmartLearn',
       role: "the school's lessons and assignments platform",
       origin: `https://learn.${apexDomain}`,
-      live: true,
+      live: false,
     },
   },
 

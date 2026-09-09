@@ -1,6 +1,6 @@
 ---
 title: 'Library'
-summary: 'TODO What pupils actually do in here. Delete this file if the school does not have one.'
+summary: 'Reading for its own sake alongside reference shelves for coursework, and a quiet room for the SSS 3 pupils revising towards their certificates.'
 icon: 'book'
 order: 3
 ---

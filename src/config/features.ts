@@ -35,8 +35,14 @@ const FeaturesSchema = z.object({
 
 export const features = FeaturesSchema.parse({
   portal: true,
-  news: true,
-  forSchools: true,
+  // Off until the school has real items. The alternative was publishing six
+  // invented events, and an empty news page reads as neglect. Turning this
+  // back on restores the page, the nav entry, the footer links and the
+  // homepage grid together.
+  news: false,
+  // This page pitches the software to other schools, in the vendor's voice. It
+  // is not Unifac's to say.
+  forSchools: false,
   staffDirectory: false,
   gallery: false,
 });
