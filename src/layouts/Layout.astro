@@ -23,7 +23,7 @@ import '../system/styles/blocks.css';
 // school is written into the chrome below: the name, the crest, the address,
 // the numbers, the nav and the year all come from config, so standing up the
 // next school is an edit to src/config and not a search through src/.
-import { site, addressLine, mapsUrl, tel, apexDomain, origin } from '../config/site';
+import { site, addressLine, mapsUrl, apexDomain, origin } from '../config/site';
 import { featureEnabled } from '../config/features';
 
 // The font families are declared in brand/palette.css and FETCHED here, and
@@ -168,7 +168,9 @@ const portalEnabled = featureEnabled('portal');
       <h4>Visit &amp; Contact</h4>
       <a href={mapsUrl} target="_blank" rel="noopener">{addressLine}</a>
       <a href="/contact#directions">Directions to the school</a>
-      {site.phones.map((phone, i) => <a href={tel(i)}>{phone.display}</a>)}
+      {site.campuses.map((campus) => (
+        <a href={`tel:${campus.phone.dial}`}>{campus.name}: {campus.phone.display}</a>
+      ))}
       <a href={`mailto:${site.email}`}>{site.email}</a>
     </div>
     <div>

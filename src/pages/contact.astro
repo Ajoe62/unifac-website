@@ -1,12 +1,17 @@
 ---
 import Icon from '../system/components/Icon.astro';
 import Layout from '../layouts/Layout.astro';
-import { site, tel, mapsUrl, addressLine } from '../config/site';
+import { site, tel, mapsUrlFor, addressLineFor, whatsappUrl } from '../config/site';
 import Directions from '../system/blocks/Directions/Routes.astro';
+
+// The WhatsApp line belongs to a campus, not to the school, so it is read off
+// the campus rather than assumed. Only Campus 1 keeps one; if that changes the
+// row disappears instead of rendering "undefined".
+const whatsapp = site.campuses.find((campus) => campus.whatsapp)?.whatsapp;
 ---
 <Layout
   title={`Contact - ${site.name}`}
-  description="TODO One sentence for search results. How to reach the school."
+  description="Addresses, phone numbers and office hours for all three Unifac Group of Schools campuses in Benin City."
   active="contact"
 >
 
@@ -14,7 +19,7 @@ import Directions from '../system/blocks/Directions/Routes.astro';
   <div class="wrap">
     <p class="eyebrow">Contact Us</p>
     <h1>We’d love to hear from you.</h1>
-    <p>Whether you’re enquiring about a place or arranging a visit, our door and our inbox are open.</p>
+    <p>Whether you’re enquiring about a place or arranging a visit, our door and our inbox are open. We teach across three campuses in Benin City, each with its own line.</p>
   </div>
 </section>
 
@@ -24,20 +29,15 @@ import Directions from '../system/blocks/Directions/Routes.astro';
       <p class="eyebrow">Reach the School</p>
       <h2 style="font-size:clamp(1.7rem,3vw,2.3rem);margin:.5rem 0 1.4rem">Visit, call or email.</h2>
       <div class="cinfo">
-        <div class="row">
-          <div class="ic"><Icon name="map-pin" size={22} stroke={1.7} /></div>
-          <div>
-            <h4>Address</h4>
-            <a href={mapsUrl} target="_blank" rel="noopener">{addressLine}</a>
+        {whatsapp && (
+          <div class="row">
+            <div class="ic"><Icon name="mobile" size={22} stroke={1.7} /></div>
+            <div>
+              <h4>WhatsApp</h4>
+              <a href={whatsappUrl(whatsapp)} target="_blank" rel="noopener">{whatsapp.display}</a>
+            </div>
           </div>
-        </div>
-        <div class="row">
-          <div class="ic"><Icon name="phone" size={22} stroke={1.7} /></div>
-          <div>
-            <h4>Phone</h4>
-            {site.phones.map((phone, i) => <>{i > 0 && <br />}<a href={tel(i)}>{phone.display}</a></>)}
-          </div>
-        </div>
+        )}
         <div class="row">
           <div class="ic"><Icon name="mail" size={22} stroke={1.7} /></div>
           <div>
@@ -90,7 +90,37 @@ import Directions from '../system/blocks/Directions/Routes.astro';
   </div>
 </section>
 
-<Directions surface="alt" />
+<section class="surface-alt">
+  <div class="wrap">
+    <p class="eyebrow">Our Campuses</p>
+    <h2 style="font-size:clamp(1.7rem,3vw,2.3rem);margin:.5rem 0 0">Three sites across Benin City.</h2>
+    <p class="lead-copy">Each campus keeps its own line. Call the one you are visiting.</p>
+
+    <div class="grid3 campus-grid">
+      {site.campuses.map((campus) => (
+        <div class="vcard campus">
+          <div class="ic"><Icon name="map-pin" size={24} stroke={1.7} /></div>
+          <h3>{campus.name}</h3>
+          <a class="campus-addr" href={mapsUrlFor(campus)} target="_blank" rel="noopener">
+            {addressLineFor(campus)}
+          </a>
+          <p class="campus-line">
+            <a href={`tel:${campus.phone.dial}`}>{campus.phone.display}</a>
+          </p>
+          {campus.whatsapp && (
+            <p class="campus-line">
+              <a href={whatsappUrl(campus.whatsapp)} target="_blank" rel="noopener">
+                {campus.whatsapp.display} on WhatsApp
+              </a>
+            </p>
+          )}
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
+
+<Directions />
 
 <section class="band">
   <div class="wrap">
@@ -170,5 +200,44 @@ import Directions from '../system/blocks/Directions/Routes.astro';
     });
   }
 </script>
+
+<style>
+  /*
+   * The campus cards reuse .vcard, which is built for a heading and one
+   * paragraph. A campus needs an address, a phone and sometimes a WhatsApp
+   * line, so only the spacing between those is set here; everything else
+   * (the border, the radius, the lift on hover) still comes from the system.
+   */
+  .campus-grid {
+    margin-top: 2rem;
+  }
+  .campus h3 {
+    margin: 0 0 0.5rem;
+  }
+  .campus-addr {
+    display: block;
+    color: var(--muted);
+    font-size: 0.98rem;
+    line-height: 1.5;
+  }
+  .campus-addr:hover {
+    color: var(--brand);
+  }
+  .campus-line {
+    margin: 0.6rem 0 0;
+  }
+  .campus-line a {
+    color: var(--ink);
+    font-weight: 700;
+  }
+  .campus-line a:hover {
+    color: var(--brand);
+  }
+  @media (max-width: 900px) {
+    .campus-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
 
 </Layout>

@@ -68,6 +68,28 @@ const Address = z.object({
   mapsQuery: nonEmpty('address.mapsQuery'),
 });
 
+/**
+ * One site the school teaches on.
+ *
+ * Unifac is a group of three campuses across Benin City, each with its own
+ * street address and its own phone. The template's original shape assumed one
+ * of each, which is true of most schools and not of this one. Rather than keep
+ * a second copy of the main campus in `address`, the array below IS the source
+ * and `address` points at whichever entry is the head office, so the two can
+ * never drift apart.
+ */
+const Campus = Address.extend({
+  /** How the school refers to this site, as a parent would hear it said. */
+  name: nonEmpty('campus name'),
+  /** Each campus answers its own line. */
+  phone: Phone,
+  /**
+   * A WhatsApp line, where the campus keeps one. Optional because only Campus 1
+   * does, and out here WhatsApp is often the number a parent actually uses.
+   */
+  whatsapp: Phone.optional(),
+});
+
 const NavItem = z.object({
   href: nonEmpty('nav href'),
   label: nonEmpty('nav label'),
@@ -120,6 +142,8 @@ const SiteSchema = z.object({
   }),
 
   address: Address,
+  /** Every campus, in the order the school lists them. */
+  campuses: z.array(Campus).min(1, 'at least one campus is required'),
   phones: z.array(Phone).min(1, 'at least one phone number is required'),
   email: z.string().email('email must be a valid address'),
   officeHours: nonEmpty('officeHours'),
@@ -152,12 +176,61 @@ const SiteSchema = z.object({
   }),
 });
 
+/**
+ * The three campuses, in the order the school lists them.
+ *
+ * `district` is left empty throughout: the LGA for each quarter was not given,
+ * and an LGA guessed from a neighbourhood name is the kind of wrong that reads
+ * as authoritative. `mapsQuery` is a construction from the address and has NOT
+ * been checked against Google Maps yet; whoever checks it owns it.
+ */
+const campuses = [
+  {
+    name: 'Campus 1',
+    street: '1 Ribway Close, 2nd Uzama Street',
+    landmark: '',
+    area: 'Oliha Quarters',
+    district: '',
+    city: 'Benin City',
+    region: 'Edo State',
+    country: 'Nigeria',
+    short: 'Oliha Quarters, Benin City',
+    mapsQuery: 'TODO verify in Google Maps: Ribway Close, Oliha Quarters, Benin City',
+    phone: { display: '0913 715 7221', dial: '+2349137157221' },
+    whatsapp: { display: '0913 715 7252', dial: '+2349137157252' },
+  },
+  {
+    name: 'Campus 2',
+    street: '2 Ikwebor Street, off 2nd Power Line',
+    landmark: 'Aigbangbe Junction',
+    area: 'Evbuotubu Quarters',
+    district: '',
+    city: 'Benin City',
+    region: 'Edo State',
+    country: 'Nigeria',
+    short: 'Evbuotubu Quarters, Benin City',
+    mapsQuery: 'TODO verify in Google Maps: Ikwebor Street, Evbuotubu Quarters, Benin City',
+    phone: { display: '0913 715 7247', dial: '+2349137157247' },
+  },
+  {
+    name: 'Ogbomwan Campus',
+    street: 'Km 4, 2nd Power Line, Upper Ekenwan Road',
+    landmark: '',
+    area: 'Ugbiyoko Quarters',
+    district: '',
+    city: 'Benin City',
+    region: 'Edo State',
+    country: 'Nigeria',
+    short: 'Ugbiyoko Quarters, Benin City',
+    mapsQuery: 'TODO verify in Google Maps: Upper Ekenwan Road, Ugbiyoko Quarters, Benin City',
+    phone: { display: '0915 078 3897', dial: '+2349150783897' },
+  },
+];
+
 const config = {
-  // TODO Every value in this block. `npm run check` fails while a TODO
-  // survives into the build, so nothing here can reach production by accident.
-  name: 'Unifac',
+  name: 'Unifac Group of Schools',
   shortName: 'Unifac',
-  descriptor: 'School',
+  descriptor: 'Nursery, Primary & Secondary',
 
   domain: 'unifacsch.com.ng',
   locale: 'en',
@@ -168,25 +241,25 @@ const config = {
     alt: 'Unifac Group of Schools crest',
   },
 
-  address: {
-    street: 'TODO: street address',
-    landmark: '',
-    area: 'TODO: area',
-    district: '',
-    city: 'City',
-    region: 'Region',
-    country: 'Nigeria',
-    short: 'TODO: short address, one line',
-    mapsQuery: 'Unifac City',
-  },
+  /**
+   * The head office, and the address the footer, the utility bar and the
+   * contact page speak with. ASSUMED to be Campus 1 because it is the one the
+   * school listed first; change this index if the head office is elsewhere and
+   * everything downstream follows.
+   */
+  address: campuses[0],
+  campuses,
 
-  phones: [{ display: '0800 000 0000', dial: '+2348000000000' }],
-  email: 'hello@example.com',
-  officeHours: 'Monday - Friday, 8:00am - 4:00pm',
+  /** One line per campus, in campus order. */
+  phones: campuses.map((campus) => campus.phone),
+  email: 'unifacsch@gmail.com',
+  officeHours: 'TODO: office hours, as the school would tell a parent',
 
-  defaultTitle: 'Unifac - City',
-  defaultDescription: 'TODO: one sentence describing Unifac, for search results and link previews.',
-  footerBlurb: 'TODO: two sentences about Unifac, shown beside the crest in the footer.',
+  defaultTitle: 'Unifac Group of Schools - Benin City',
+  defaultDescription:
+    'Unifac Group of Schools is a nursery, primary and secondary school across three campuses in Benin City, Edo State.',
+  footerBlurb:
+    'Unifac Group of Schools teaches nursery, primary and secondary pupils across three campuses in Benin City. Our motto is Knowledge from God.',
 
   copyrightYear: 2026,
 
@@ -246,20 +319,50 @@ export const apexDomain = site.domain.replace(/^www\./, '');
 /** The canonical origin, for `site` in astro.config and for absolute URLs. */
 export const origin = `https://${site.domain}`;
 
-/** Google Maps link for the school's address. */
-export const mapsUrl = `https://maps.google.com/?q=${site.address.mapsQuery.replace(/\s+/g, '+')}`;
+type AddressLike = Site['address'];
 
-/** The address as one line, for the footer and the contact page. */
-export const addressLine = [
-  site.address.street,
-  site.address.landmark,
-  site.address.area,
-  site.address.district,
-  site.address.city,
-  site.address.region,
-]
-  .filter(Boolean)
-  .join(', ');
+/**
+ * Google Maps link for any campus.
+ *
+ * Taken as an argument rather than read off `site.address`, because with three
+ * campuses the interesting question is "where is THIS one", and a helper that
+ * can only answer for the head office would be quietly wrong on two thirds of
+ * the contact page.
+ */
+export function mapsUrlFor(address: AddressLike) {
+  return `https://maps.google.com/?q=${address.mapsQuery.replace(/\s+/g, '+')}`;
+}
+
+/** The address as one line. Same reasoning: any campus, not just the first. */
+export function addressLineFor(address: AddressLike) {
+  return [
+    address.street,
+    address.landmark,
+    address.area,
+    address.district,
+    address.city,
+    address.region,
+  ]
+    .filter(Boolean)
+    .join(', ');
+}
+
+/** Google Maps link for the head office, for the footer and the utility bar. */
+export const mapsUrl = mapsUrlFor(site.address);
+
+/** The head office address as one line. */
+export const addressLine = addressLineFor(site.address);
+
+/**
+ * `https://wa.me/...` for a campus that keeps a WhatsApp line.
+ *
+ * wa.me wants the number without the leading `+`, and opens the app on a phone
+ * and WhatsApp Web on a desktop. A `tel:` link to the same number would reach
+ * the handset instead, which is not what a parent tapping "WhatsApp" means.
+ */
+export function whatsappUrl(phone: { dial: string }) {
+  return `https://wa.me/${phone.dial.replace(/^\+/, '')}`;
+}
 
 /**
  * `mailto:` for the school office, with an optional pre-filled subject.
