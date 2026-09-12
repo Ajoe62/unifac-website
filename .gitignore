@@ -38,3 +38,9 @@ brand/.brand-report.json
 
 # The trial site built to prove the template, in Phase 7.
 .trial/
+
+# The school's promotional film and the clips cut from it, as supplied: 1080p
+# at around 14Mbps, 30 to 90MB each. That is far more than a homepage should
+# ask a family's phone to download, and near GitHub's file limits. The hero
+# plays compressed copies of the clips, which live in public/videos/.
+src/assets/*.mp4

@@ -1,0 +1,412 @@
+---
+/**
+ * Full screen homepage hero over a looping, cross fading sequence: the video
+ * clips in order, with sound where the browser allows it, then the photographs,
+ * then round again.
+ *
+ * WHY THIS IS NOT IN src/system/blocks/Hero/. This repo is a client of the
+ * school site template, and scripts/check-system.mjs fails the build when
+ * src/system differs from the template's copy. A video hero cut from Unifac's
+ * own film is this school's, so it is a site component that the homepage
+ * renders directly rather than a registered block variant.
+ *
+ * WHY THERE IS A SOUND BUTTON. Browsers refuse to start video with sound until
+ * the visitor has interacted with the site, so a first visit usually gets the
+ * film muted. The button is how they turn the sound on, and once it is on,
+ * how they turn it off again: sound that plays by itself needs a way to stop.
+ */
+import { Image } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+import Actions from '../system/blocks/Actions.astro';
+import type { Action } from '../system/blocks/types';
+
+interface Props {
+  /** Clip URLs under public/, played in order. Any number works. */
+  clips: string[];
+  /** Photographs shown after the clips, each for IMAGE_MS. Any number works. */
+  images?: ImageMetadata[];
+  /** Allows an <em> around the emphasised word, which is why it is set:html. */
+  headline: string;
+  lead?: string;
+  actions?: Action[];
+}
+
+const { clips, images = [], headline, lead, actions = [] } = Astro.props;
+---
+<section class="hero hero--video">
+  {/* Decorative: the headline carries the meaning, so the slides have no alt text. */}
+  <div class="hero-video-bg" aria-hidden="true">
+    {clips.map((src, i) => (
+      <video
+        class="hero-slide hero-vid"
+        muted
+        playsinline
+        autoplay={i === 0}
+        preload={i === 0 ? 'auto' : 'none'}
+      >
+        <source src={src} type="video/mp4" />
+      </video>
+    ))}
+    {images.map((image, i) => (
+      <div class="hero-slide hero-img">
+        <Image
+          src={image}
+          alt=""
+          widths={[768, 1200, 1672]}
+          sizes="100vw"
+          format="webp"
+          quality={82}
+          loading={clips.length === 0 && i === 0 ? 'eager' : 'lazy'}
+        />
+      </div>
+    ))}
+  </div>
+  <div class="hero-vignette" aria-hidden="true"></div>
+  <div class="hero-content">
+    <h1 set:html={headline} />
+    {lead && <p class="lead">{lead}</p>}
+    {actions.length > 0 && <Actions actions={actions} large />}
+  </div>
+  <button class="hero-sound" type="button" data-sound="off" hidden>
+    <svg class="icon-on" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <path d="M11 5 6 9H2v6h4l5 4V5z" />
+      <path d="M15.5 8.5a5 5 0 0 1 0 7" />
+      <path d="M19 5a10 10 0 0 1 0 14" />
+    </svg>
+    <svg class="icon-off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <path d="M11 5 6 9H2v6h4l5 4V5z" />
+      <path d="m23 9-6 6" />
+      <path d="m17 9 6 6" />
+    </svg>
+    <span class="hero-sound-label">Tap for sound</span>
+  </button>
+</section>
+
+<style>
+  /*
+   * The doubled class is deliberate. blocks.css already styles .hero, .hero h1,
+   * .hero p.lead and .hero .cta for the split hero, and every rule here has to
+   * outrank its namesake there whichever stylesheet happens to load last.
+   */
+  .hero.hero--video {
+    position: relative;
+    min-height: 100svh;
+    overflow: hidden;
+    isolation: isolate;
+    display: flex;
+    align-items: center;
+    color: var(--on-brand);
+    /* What shows before the first frame, and all that shows under reduced motion. */
+    background: radial-gradient(ellipse at 30% 40%, var(--brand) 0%, var(--brand-900) 70%);
+  }
+  /* The split hero's dot texture. */
+  .hero.hero--video::before {
+    content: none;
+  }
+
+  .hero-video-bg {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+  }
+  .hero-slide {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    opacity: 0;
+    /* GSAP's power2.inOut, as a cubic bezier. */
+    transition: opacity 1.5s cubic-bezier(0.455, 0.03, 0.515, 0.955);
+  }
+  .hero-slide.is-active {
+    opacity: 1;
+  }
+  .hero-vid,
+  .hero-img :global(img) {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  /* A slow drift on the photographs, so they do not sit dead after moving video. */
+  @media (prefers-reduced-motion: no-preference) {
+    .hero-img :global(img) {
+      transform: scale(1.04);
+    }
+    .hero-img.is-active :global(img) {
+      animation: hero-photo-drift 7.5s ease-out both;
+    }
+  }
+  @keyframes hero-photo-drift {
+    from {
+      transform: scale(1.04);
+    }
+    to {
+      transform: scale(1.12);
+    }
+  }
+
+  /* Darkens the top for the sticky header and the left for the headline. */
+  .hero-vignette {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    background:
+      linear-gradient(to bottom, rgb(var(--brand-900-rgb) / 0.8) 0%, transparent 30%),
+      linear-gradient(
+        to right,
+        rgb(var(--brand-900-rgb) / 0.85) 0%,
+        rgb(var(--brand-900-rgb) / 0.35) 55%,
+        transparent 100%
+      );
+  }
+
+  .hero-content {
+    position: relative;
+    z-index: 2;
+    width: var(--wrap-w);
+    margin-inline: auto;
+    padding-block: 3.4rem;
+  }
+  .hero.hero--video h1 {
+    font-size: clamp(2.5rem, 5vw, 4rem);
+    color: #fff;
+    letter-spacing: -0.01em;
+    max-width: 18ch;
+    text-shadow: 0 2px 22px rgb(0 0 0 / 0.55), 0 1px 3px rgb(0 0 0 / 0.5);
+  }
+  .hero.hero--video h1 :global(em) {
+    font-style: italic;
+    color: var(--accent-300);
+  }
+  .hero.hero--video p.lead {
+    font-size: 1.14rem;
+    color: var(--on-brand-2);
+    max-width: 46ch;
+    margin: 1.3rem 0 0;
+  }
+  .hero.hero--video :global(.cta) {
+    margin-top: 3.2rem;
+  }
+
+  .hero-sound {
+    position: absolute;
+    z-index: 3;
+    right: 1.5rem;
+    bottom: 1.5rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.55rem 1rem;
+    border: 1px solid rgb(255 255 255 / 0.35);
+    border-radius: var(--radius-pill);
+    background: rgb(var(--brand-900-rgb) / 0.55);
+    backdrop-filter: blur(6px);
+    color: #fff;
+    font: inherit;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: background 0.2s ease;
+  }
+  .hero-sound[hidden] {
+    display: none;
+  }
+  .hero-sound:hover {
+    background: rgb(var(--brand-900-rgb) / 0.8);
+  }
+  .hero-sound:focus-visible {
+    outline: 2px solid var(--accent-300);
+    outline-offset: 3px;
+  }
+  .hero-sound svg {
+    width: 18px;
+    height: 18px;
+  }
+  .hero-sound[data-sound='on'] .icon-off,
+  .hero-sound[data-sound='off'] .icon-on {
+    display: none;
+  }
+
+  /*
+   * blocks.css centres the split hero's buttons and lead on narrow screens.
+   * This hero's vignette is heaviest on the left, so the text stays there.
+   */
+  @media (max-width: 940px) {
+    .hero.hero--video :global(.cta) {
+      justify-content: flex-start;
+    }
+    .hero.hero--video p.lead {
+      margin-inline: 0;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .hero-video-bg {
+      display: none;
+    }
+  }
+</style>
+
+<script>
+  /*
+   * A video slide hands over on "ended"; a photograph after IMAGE_MS. The fade
+   * itself is the CSS opacity transition; this moves the is-active class and
+   * keeps playback, sound and buffering in step with it.
+   */
+  const FADE_MS = 1500;
+  const IMAGE_MS = 6000;
+
+  const isVideo = (el: Element): el is HTMLVideoElement => el instanceof HTMLVideoElement;
+
+  function init(): () => void {
+    const root = document.querySelector<HTMLElement>('.hero--video');
+    const slides = root ? Array.from(root.querySelectorAll<HTMLElement>('.hero-slide')) : [];
+    const videos = slides.filter(isVideo);
+    const n = slides.length;
+    if (!root || n === 0) return () => {};
+
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      // The first clip carries autoplay and preload="auto", so hiding it is not
+      // enough to stop the download. Taking its source away is.
+      for (const v of videos) {
+        v.pause();
+        v.querySelectorAll('source').forEach((s) => s.removeAttribute('src'));
+        v.load();
+      }
+      return () => {};
+    }
+
+    const soundBtn = root.querySelector<HTMLButtonElement>('.hero-sound');
+    const soundLabel = soundBtn?.querySelector('.hero-sound-label');
+    // Sound is the intent. Whether the browser allows it is found out on play.
+    let soundOn = true;
+    let current = 0;
+    let imageTimer = 0;
+
+    const renderSound = () => {
+      if (!soundBtn || videos.length === 0) return;
+      soundBtn.hidden = false;
+      soundBtn.dataset.sound = soundOn ? 'on' : 'off';
+      if (soundLabel) soundLabel.textContent = soundOn ? 'Mute' : 'Tap for sound';
+    };
+
+    // Plays a clip with the current sound setting. A browser that will not
+    // start sound without a click rejects with NotAllowedError; the film then
+    // carries on muted and the button offers the sound instead.
+    const start = (v: HTMLVideoElement) => {
+      v.muted = !soundOn;
+      v.play().catch((err: DOMException) => {
+        if (err.name !== 'NotAllowedError' || v.muted) return;
+        soundOn = false;
+        renderSound();
+        v.muted = true;
+        v.play().catch(() => {});
+      });
+    };
+
+    const onToggle = () => {
+      soundOn = !soundOn;
+      renderSound();
+      const el = slides[current];
+      if (!isVideo(el)) return;
+      el.muted = !soundOn;
+      // Unmuting without a click can pause a clip; this click is the permission.
+      if (el.paused) el.play().catch(() => {});
+    };
+    soundBtn?.addEventListener('click', onToggle);
+
+    // load() on a clip that has already buffered would throw that buffer away,
+    // and with two clips the one after next is the one still fading out.
+    const primed = new Set<HTMLVideoElement>();
+    const prime = (el: HTMLElement) => {
+      if (!isVideo(el) || primed.has(el)) return;
+      primed.add(el);
+      el.preload = 'auto';
+      el.load();
+    };
+
+    // Fades still in flight, each with a way to cancel it.
+    const fading = new Map<HTMLVideoElement, () => void>();
+
+    const fadeOutVideo = (outgoing: HTMLVideoElement) => {
+      const onFadeEnd = (t: TransitionEvent) => {
+        if (t.propertyName === 'opacity') settle();
+      };
+      const timer = window.setTimeout(() => settle(), FADE_MS + 100);
+      const cancel = () => {
+        outgoing.removeEventListener('transitionend', onFadeEnd);
+        clearTimeout(timer);
+        fading.delete(outgoing);
+      };
+      function settle() {
+        cancel();
+        if (outgoing.classList.contains('is-active')) return;
+        outgoing.pause();
+        outgoing.currentTime = 0;
+      }
+      outgoing.addEventListener('transitionend', onFadeEnd);
+      fading.set(outgoing, cancel);
+    };
+
+    // Starts whatever the slide at `index` needs to eventually hand over.
+    const run = (index: number) => {
+      const el = slides[index];
+      if (isVideo(el)) start(el);
+      else imageTimer = window.setTimeout(advance, IMAGE_MS);
+    };
+
+    function advance() {
+      const outgoing = slides[current];
+      const next = (current + 1) % n;
+      const incoming = slides[next];
+      incoming.classList.add('is-active');
+      outgoing.classList.remove('is-active');
+      if (isVideo(outgoing)) fadeOutVideo(outgoing);
+
+      current = next;
+      run(next);
+      prime(slides[(next + 1) % n]);
+    }
+
+    const onEnded = (e: Event) => {
+      if (e.target === slides[current]) advance();
+    };
+
+    const first = slides[0];
+    if (isVideo(first)) primed.add(first);
+    first.classList.add('is-active');
+    renderSound();
+
+    if (n === 1) {
+      // "ended" never fires on a looping video, so one clip simply loops.
+      if (isVideo(first)) {
+        first.loop = true;
+        start(first);
+      }
+      return () => {
+        soundBtn?.removeEventListener('click', onToggle);
+        if (isVideo(first)) first.pause();
+      };
+    }
+
+    for (const v of videos) v.addEventListener('ended', onEnded);
+    run(0);
+    prime(slides[1]);
+
+    return () => {
+      soundBtn?.removeEventListener('click', onToggle);
+      clearTimeout(imageTimer);
+      for (const v of videos) {
+        v.removeEventListener('ended', onEnded);
+        v.pause();
+      }
+      for (const cancel of Array.from(fading.values())) cancel();
+    };
+  }
+
+  const destroy = init();
+  // Only fires if a client side router is added; a full page load needs no teardown.
+  document.addEventListener('astro:before-swap', destroy, { once: true });
+</script>

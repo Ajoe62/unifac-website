@@ -20,12 +20,11 @@ import type { Stat } from '../system/blocks/Stats/Strip.astro';
 import { portalHref } from './integrations';
 import { site } from './site';
 import welcomePhoto from '../assets/images/welcome.png';
-import hero0 from '../assets/images/hero-1.png';
-import hero1 from '../assets/images/hero-2.png';
-import hero2 from '../assets/images/hero-3.png';
-import hero3 from '../assets/images/hero-4.png';
-import hero4 from '../assets/images/hero-5.png';
-import type { Slide } from '../system/blocks/Hero/Carousel.astro';
+import hero1 from '../assets/images/hero-1.png';
+import hero2 from '../assets/images/hero-2.png';
+import hero3 from '../assets/images/hero-3.png';
+import hero4 from '../assets/images/hero-4.png';
+import hero5 from '../assets/images/hero-5.png';
 
 export interface SectionSpec {
   /** Family of block: 'hero', 'values', 'cta'. */
@@ -46,14 +45,6 @@ export interface SectionSpec {
 const applyHref = portalHref('entrance') ?? '/admissions';
 const applyRel = applyHref.startsWith('http') ? 'noopener' : undefined;
 
-const heroSlides: Slide[] = [
-  { src: hero0, alt: 'Pupils and teachers on campus' },
-  { src: hero1, alt: 'Students engaged in a bright, modern classroom' },
-  { src: hero2, alt: 'Children learning together' },
-  { src: hero3, alt: 'School life outdoors' },
-  { src: hero4, alt: 'Confident young learners' },
-];
-
 // Four facts, each one checkable. The template shipped "EYFS + Cambridge"
 // here, which is the curriculum of the school this template was extracted
 // from and not the one Unifac teaches.
@@ -69,16 +60,18 @@ const heroActions: Action[] = [
   { label: 'Discover the School', href: '/about' },
 ];
 
+// The homepage hero, rendered by src/pages/index.astro rather than listed in
+// `home`, because it is a site component and not a template block. The clips
+// play in this order, then the photographs, cross fading throughout and
+// round again. The clips live in public/videos/.
+export const heroVideo = {
+  clips: ['/videos/hero-1.mp4', '/videos/hero-2.mp4', '/videos/hero-3.mp4'],
+  images: [hero1, hero2, hero3, hero4, hero5],
+  headline: 'Nursery to Senior Secondary, across <em>three campuses</em> in Benin City.',
+  actions: heroActions,
+};
+
 export const home: SectionSpec[] = [
-  {
-    block: 'hero',
-    variant: 'carousel',
-    props: {
-      slides: heroSlides,
-      headline: 'Nursery to Senior Secondary, across <em>three campuses</em> in Benin City.',
-      actions: heroActions,
-    },
-  },
   { block: 'stats', variant: 'strip', props: { stats } },
   {
     block: 'welcome',

@@ -1,9 +1,11 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import Sections from '../system/components/Sections.astro';
+import HeroVideo from '../components/HeroVideo.astro';
 import { site } from '../config/site';
-import { home } from '../config/pages';
+import { home, heroVideo } from '../config/pages';
 ---
 <Layout title={`${site.name}, ${site.address.city}`} active="">
+  <HeroVideo {...heroVideo} />
   <Sections spec={home} />
 </Layout>
