@@ -19,12 +19,12 @@ import type { Surface, Action } from '../system/blocks/types';
 import type { Stat } from '../system/blocks/Stats/Strip.astro';
 import { portalHref } from './integrations';
 import { site } from './site';
-import welcomePhoto from '../assets/images/welcome.jpg';
-import hero0 from '../assets/images/hero-1.jpg';
-import hero1 from '../assets/images/hero-2.jpg';
-import hero2 from '../assets/images/hero-3.jpg';
-import hero3 from '../assets/images/hero-4.jpg';
-import hero4 from '../assets/images/hero-5.jpg';
+import welcomePhoto from '../assets/images/welcome.png';
+import hero0 from '../assets/images/hero-1.png';
+import hero1 from '../assets/images/hero-2.png';
+import hero2 from '../assets/images/hero-3.png';
+import hero3 from '../assets/images/hero-4.png';
+import hero4 from '../assets/images/hero-5.png';
 import type { Slide } from '../system/blocks/Hero/Carousel.astro';
 
 export interface SectionSpec {

@@ -6,10 +6,8 @@ import Icon from '../system/components/Icon.astro';
 import MediaText from '../system/blocks/Media/Text.astro';
 import Facilities from '../system/blocks/Feature/Grid.astro';
 import { Image } from 'astro:assets';
-import headPhoto from '../assets/images/head-of-school.jpg';
-// A real photograph of the school, not a placeholder. It is 873px wide, which
-// is enough for this block and not enough for a hero.
-import storyPhoto from '../assets/images/signboard.jpg';
+import headPhoto from '../assets/images/head-of-school.png';
+import storyPhoto from '../assets/images/signboard.png';
 
 // The same three values the homepage shows, from the same files.
 const values = (await getCollection('values')).sort((a, b) => a.data.order - b.data.order);
