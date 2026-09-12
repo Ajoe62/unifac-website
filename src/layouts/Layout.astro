@@ -18,6 +18,10 @@ import '../system/styles/reset.css';
 import '../system/styles/surfaces.css';
 import '../system/styles/primitives.css';
 import '../system/styles/blocks.css';
+// Site owned, and last so it wins ties: entrance motion, the scrolled header
+// and the reading progress line. Outside src/system so the template guard
+// stays green; the file's header explains how it reaches template markup.
+import '../styles/motion.css';
 // Site owned card finish for the static card grids on this school's pages.
 import '../styles/site.css';
 
@@ -119,8 +123,27 @@ const portalEnabled = featureEnabled('portal');
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href={`https://fonts.googleapis.com/css2?${fonts.google}&display=swap`} rel="stylesheet" />
+  <script is:inline>
+    // Runs before first paint, so sections that will animate in are already
+    // hidden rather than flashing up and vanishing. Skipped for visitors who
+    // ask for less motion. If motion.ts has not started 2.5s later, show
+    // everything instead of leaving the page blank.
+    (function () {
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+      var html = document.documentElement;
+      html.classList.add('motion');
+      setTimeout(function () {
+        if (!html.hasAttribute('data-motion-live')) html.classList.remove('motion');
+      }, 2500);
+    })();
+  </script>
+  <script>
+    import '../scripts/motion';
+  </script>
 </head>
 <body>
+
+<div class="scroll-progress" aria-hidden="true"></div>
 
 <div class="util">
   <div class="wrap">
