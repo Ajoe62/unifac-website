@@ -1,0 +1,85 @@
+/* ==========================================================================
+   SITE FINISH
+
+   The static card grids written into this school's pages ("How we teach",
+   "A full school day", and the like), given the same white and deep navy
+   alternation as the sliders in src/components/CardSlider.astro, so a page
+   does not switch design language between one band and the next.
+
+   Outside src/system for the same reason motion.css is; it overrides the
+   template's .feat card by being more specific and loading after it.
+   ========================================================================== */
+
+.feat-grid > .feat {
+  position: relative;
+  overflow: hidden;
+  padding: clamp(1.8rem, 2.6vw, 2.4rem);
+  border-radius: 20px;
+  background: #fff;
+  border-color: rgb(var(--brand-900-rgb) / 0.08);
+  box-shadow: 0 14px 36px rgb(var(--brand-900-rgb) / 0.06);
+  transition:
+    transform 0.5s var(--ease),
+    box-shadow 0.5s var(--ease);
+}
+.feat-grid > .feat:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 30px 60px rgb(var(--brand-900-rgb) / 0.18);
+}
+.feat-grid > .feat .ic {
+  width: 58px;
+  height: 58px;
+  margin-bottom: 1.4rem;
+  border-radius: 16px;
+  color: var(--brand-900);
+}
+/* The short gold rule above each card title. */
+.feat-grid > .feat h3::before {
+  content: '';
+  display: block;
+  width: 36px;
+  height: 2px;
+  margin-bottom: 0.9rem;
+  background: var(--accent);
+}
+.feat-grid > .feat h3 {
+  color: var(--brand-900);
+}
+
+.feat-grid > .feat:nth-child(even) {
+  background: var(--brand-900);
+  border-color: transparent;
+}
+/* A low gold light in the corner, as on the navy slider cards. */
+.feat-grid > .feat:nth-child(even)::before {
+  content: '';
+  position: absolute;
+  right: -35%;
+  bottom: -50%;
+  width: 85%;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgb(var(--accent-rgb) / 0.22), transparent 65%);
+  pointer-events: none;
+}
+.feat-grid > .feat:nth-child(even) .ic {
+  background: rgb(255 255 255 / 0.07);
+  color: var(--accent-300);
+  box-shadow: inset 0 0 0 1px rgb(var(--accent-300-rgb) / 0.28);
+}
+.feat-grid > .feat:nth-child(even) h3 {
+  color: var(--on-brand-strong);
+}
+.feat-grid > .feat:nth-child(even) p {
+  color: var(--on-brand-3);
+}
+/* Keep copy above the corner light. */
+.feat-grid > .feat > * {
+  position: relative;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .feat-grid > .feat {
+    transition: none;
+  }
+}

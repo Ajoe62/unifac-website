@@ -2,10 +2,16 @@
 import Layout from '../layouts/Layout.astro';
 import Sections from '../system/components/Sections.astro';
 import HeroVideo from '../components/HeroVideo.astro';
+import { SITE_BLOCKS } from '../components/siteBlocks';
 import { site } from '../config/site';
 import { home, heroVideo } from '../config/pages';
 ---
 <Layout title={`${site.name}, ${site.address.city}`} active="">
   <HeroVideo {...heroVideo} />
-  <Sections spec={home} />
+  {home.map((item) => {
+    const siteBlock = SITE_BLOCKS[`${item.block}:${item.variant}`];
+    if (!siteBlock) return <Sections spec={[item]} />;
+    const Block = siteBlock.Component;
+    return <Block {...siteBlock.props} {...item.props} surface={item.surface} id={item.id} />;
+  })}
 </Layout>

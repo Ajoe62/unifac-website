@@ -1,16 +1,11 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import { site } from '../config/site';
-import { getCollection } from 'astro:content';
-import Icon from '../system/components/Icon.astro';
 import MediaText from '../system/blocks/Media/Text.astro';
-import Facilities from '../system/blocks/Feature/Grid.astro';
+import CardSlider from '../components/CardSlider.astro';
 import { Image } from 'astro:assets';
 import headPhoto from '../assets/images/head-of-school.png';
 import storyPhoto from '../assets/images/signboard.png';
-
-// The same three values the homepage shows, from the same files.
-const values = (await getCollection('values')).sort((a, b) => a.data.order - b.data.order);
 ---
 <Layout
   title={`About - ${site.name}`}
@@ -56,22 +51,16 @@ const values = (await getCollection('values')).sort((a, b) => a.data.order - b.d
   </div>
 </MediaText>
 
-<section class="values" style="background:var(--surface-2)">
-  <div class="wrap">
-    <div class="sec-head"><p class="eyebrow">Our Promise</p><h2>Three commitments, on our crest and in our classrooms.</h2><p>The open book, the ladder and the cap are not decoration. They name what we set out to give every child who joins us.</p></div>
-    <div class="values-grid" style="display:grid;grid-template-columns:repeat(3,1fr);gap:1.4rem;margin-top:2.6rem">
-      {values.map((value) => (
-        <div class="vcard">
-          <div class="ic"><Icon name={value.data.icon} /></div>
-          <h3>{value.data.title}</h3>
-          <p>{value.data.summary}</p>
-        </div>
-      ))}
-    </div>
-  </div>
-</section>
+{/* The same three values the homepage shows, from the same files. */}
+<CardSlider
+  collection="values"
+  surface="alt"
+  eyebrow="Our Promise"
+  title="Three commitments, on our crest and in our classrooms."
+  intro="The open book, the ladder and the cap are not decoration. They name what we set out to give every child who joins us."
+/>
 
-<Facilities
+<CardSlider
   title="Where the learning happens."
   intro="Laboratories, a library, and rooms for music, art and sport, so a child's day is not spent only at a desk."
 />

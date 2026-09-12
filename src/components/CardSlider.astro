@@ -1,0 +1,645 @@
+---
+/**
+ * A collection as a row of large cards that slides along one card at a time,
+ * on its own and round and round. The cards alternate white and deep navy, so
+ * a run of them reads as a sequence rather than one pale block.
+ *
+ * WHY THIS IS NOT IN src/system/blocks/. This repo is a client of the school
+ * site template, and scripts/check-system.mjs fails the build when src/system
+ * differs from the template's copy. This stands in for values:cards and
+ * feature:grid on this school's site only: the homepage reaches it through
+ * src/components/siteBlocks.ts, and the inner pages import it directly.
+ *
+ * HOW THE LOOP WORKS. The cards are rendered three times over. The visitor
+ * starts on the middle copy, and whenever the slider settles in the first or
+ * last copy it is moved by exactly one copy's width, which puts an identical
+ * card in the identical place. With an odd number of cards the list is doubled
+ * first, or that move would swap every white card for a navy one.
+ */
+import { getCollection } from 'astro:content';
+import Icon from '../system/components/Icon.astro';
+import type { Surface } from '../system/blocks/types';
+
+type Collection = 'facilities' | 'values';
+
+interface Props {
+  /** Defaults to facilities, which is what every inner page shows. */
+  collection?: Collection;
+  eyebrow?: string;
+  title?: string;
+  intro?: string;
+  surface?: Surface;
+  id?: string;
+}
+
+// The facilities copy the template's Feature/Grid used when a page gave none.
+const DEFAULTS: Record<Collection, { eyebrow?: string; title?: string; intro?: string }> = {
+  facilities: {
+    eyebrow: 'Our Facilities',
+    title: 'Well-equipped spaces for real learning.',
+    intro:
+      'Good teaching deserves good tools. Our laboratories, studios, library and grounds give pupils the space and equipment to learn by doing.',
+  },
+  values: {},
+};
+
+const { collection = 'facilities', surface = 'base', id } = Astro.props;
+const eyebrow = Astro.props.eyebrow ?? DEFAULTS[collection].eyebrow;
+const title = Astro.props.title ?? DEFAULTS[collection].title;
+const intro = Astro.props.intro ?? DEFAULTS[collection].intro;
+
+const items = (await getCollection(collection))
+  .sort((a, b) => a.data.order - b.data.order)
+  .map((entry) => ({ title: entry.data.title, summary: entry.data.summary, icon: entry.data.icon }));
+const count = items.length;
+const period = count % 2 ? [...items, ...items] : items;
+const pad = (n: number) => String(n).padStart(2, '0');
+---
+<section
+  id={id}
+  class={['card-slider', count <= 3 ? 'is-wide' : null, surface !== 'base' ? `surface-${surface}` : null]
+    .filter(Boolean)
+    .join(' ')}
+  aria-roledescription="carousel"
+  aria-label={title ?? eyebrow}
+  data-period={period.length}
+  data-count={count}
+>
+  <div class="wrap cs-head">
+    {title && (
+      <div class="sec-head">
+        {eyebrow && <p class="eyebrow">{eyebrow}</p>}
+        <h2>{title}</h2>
+        {intro && <p>{intro}</p>}
+      </div>
+    )}
+    <div class="cs-controls">
+      <p class="cs-count" aria-hidden="true"><b class="cs-current">01</b> / {pad(count)}</p>
+      <button type="button" class="cs-btn cs-prev" aria-label="Previous card">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5" /><path d="m12 19-7-7 7-7" /></svg>
+      </button>
+      <button type="button" class="cs-btn cs-pause" aria-label="Pause the slides" data-state="playing">
+        <svg class="icon-pause" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M9 5v14" /><path d="M15 5v14" /></svg>
+        <svg class="icon-play" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><path d="M7 4.5v15l12-7.5Z" /></svg>
+      </button>
+      <button type="button" class="cs-btn cs-next" aria-label="Next card">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14" /><path d="m12 5 7 7-7 7" /></svg>
+      </button>
+    </div>
+  </div>
+
+  <div class="cs-viewport">
+    <div class="cs-track">
+      {[0, 1, 2].map((copy) =>
+        period.map((item, i) => {
+          // Only the first run of the middle copy is real to assistive tech and
+          // the keyboard; every other card is scenery for the loop.
+          const real = copy === 1 && i < count;
+          return (
+            <div
+              class={`cs-card ${i % 2 ? 'is-dark' : 'is-light'}`}
+              role={real ? 'group' : undefined}
+              aria-roledescription={real ? 'slide' : undefined}
+              aria-label={real ? `${i + 1} of ${count}` : undefined}
+              aria-hidden={real ? undefined : 'true'}
+              inert={!real}
+            >
+              <span class="cs-num" aria-hidden="true">{pad((i % count) + 1)}</span>
+              <div class="cs-ic"><Icon name={item.icon} size={30} /></div>
+              <div class="cs-body">
+                <h3>{item.title}</h3>
+                <p>{item.summary}</p>
+              </div>
+            </div>
+          );
+        }),
+      )}
+    </div>
+  </div>
+
+  <div class="wrap cs-progress" aria-hidden="true"><span class="cs-bar"></span></div>
+</section>
+
+<style>
+  .card-slider {
+    overflow: hidden;
+  }
+
+  .cs-head {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 1.6rem 3rem;
+    flex-wrap: wrap;
+  }
+  .cs-controls {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    flex-shrink: 0;
+  }
+  .cs-count {
+    margin: 0 0.8rem 0 0;
+    font-family: var(--font-display);
+    font-variant-numeric: tabular-nums;
+    font-size: 1rem;
+    color: var(--muted);
+    white-space: nowrap;
+  }
+  .cs-count b {
+    font-size: 1.9rem;
+    font-weight: var(--font-display-weight);
+    color: var(--brand-900);
+  }
+  .cs-btn {
+    width: 50px;
+    height: 50px;
+    padding: 0;
+    display: grid;
+    place-items: center;
+    border-radius: 50%;
+    border: var(--border-weight) solid rgb(var(--brand-900-rgb) / 0.18);
+    background: var(--card);
+    color: var(--brand-900);
+    cursor: pointer;
+    transition:
+      background 0.25s var(--ease),
+      color 0.25s var(--ease),
+      border-color 0.25s var(--ease),
+      transform 0.25s var(--ease);
+  }
+  .cs-btn:hover {
+    background: var(--brand-900);
+    border-color: var(--brand-900);
+    color: #fff;
+    transform: var(--lift-sm);
+  }
+  .cs-btn:focus-visible {
+    outline: 3px solid var(--accent-300);
+    outline-offset: 3px;
+  }
+  .cs-btn svg {
+    width: 20px;
+    height: 20px;
+  }
+  .cs-pause[data-state='playing'] .icon-play,
+  .cs-pause[data-state='paused'] .icon-pause {
+    display: none;
+  }
+
+  /*
+   * Full width, with the first card lined up under the heading. The gutter is
+   * the space either side of the page measure, so the row runs off the right
+   * edge of the screen rather than stopping at the column.
+   */
+  .cs-viewport {
+    --cs-gutter: max(1rem, calc((100% - var(--wrap-w)) / 2));
+    position: relative;
+    margin-top: clamp(2rem, 4vw, 3.2rem);
+    padding: 0.6rem var(--cs-gutter) 1.6rem;
+    scroll-padding-inline: var(--cs-gutter);
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+  }
+  .cs-viewport::-webkit-scrollbar {
+    display: none;
+  }
+  .cs-track {
+    display: flex;
+    gap: clamp(1rem, 2vw, 1.6rem);
+    width: max-content;
+  }
+
+  .cs-card {
+    position: relative;
+    flex: 0 0 clamp(280px, 40vw, 540px);
+    min-height: clamp(340px, 30vw, 420px);
+    display: flex;
+    flex-direction: column;
+    padding: clamp(1.8rem, 3vw, 2.8rem);
+    border-radius: 22px;
+    overflow: hidden;
+    scroll-snap-align: start;
+    transition:
+      transform 0.5s var(--ease),
+      box-shadow 0.5s var(--ease);
+  }
+  .card-slider.is-wide .cs-card {
+    flex-basis: clamp(290px, 56vw, 720px);
+  }
+  .cs-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 30px 60px rgb(var(--brand-900-rgb) / 0.18);
+  }
+  .cs-card.is-light {
+    background: #fff;
+    color: var(--ink);
+    border: var(--border-weight) solid rgb(var(--brand-900-rgb) / 0.08);
+    box-shadow: 0 14px 36px rgb(var(--brand-900-rgb) / 0.06);
+  }
+  .cs-card.is-dark {
+    background: var(--brand-900);
+    color: var(--on-brand-2);
+  }
+  /* A low gold light in the corner of the navy cards. */
+  .cs-card.is-dark::before {
+    content: '';
+    position: absolute;
+    right: -30%;
+    bottom: -45%;
+    width: 80%;
+    aspect-ratio: 1;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgb(var(--accent-rgb) / 0.22), transparent 65%);
+    pointer-events: none;
+  }
+
+  .cs-num {
+    position: absolute;
+    top: clamp(1.2rem, 2.4vw, 2rem);
+    right: clamp(1.4rem, 2.8vw, 2.4rem);
+    font-family: var(--font-display);
+    font-weight: var(--font-display-weight);
+    font-size: clamp(3.2rem, 6vw, 5.4rem);
+    line-height: 1;
+    letter-spacing: -0.03em;
+  }
+  .is-light .cs-num {
+    color: rgb(var(--brand-900-rgb) / 0.07);
+  }
+  .is-dark .cs-num {
+    color: rgb(var(--accent-300-rgb) / 0.16);
+  }
+
+  .cs-ic {
+    position: relative;
+    width: 64px;
+    height: 64px;
+    border-radius: 16px;
+    display: grid;
+    place-items: center;
+  }
+  .is-light .cs-ic {
+    background: var(--tint-accent);
+    color: var(--brand-900);
+  }
+  .is-dark .cs-ic {
+    background: rgb(255 255 255 / 0.07);
+    color: var(--accent-300);
+    box-shadow: inset 0 0 0 1px rgb(var(--accent-300-rgb) / 0.28);
+  }
+
+  .cs-body {
+    position: relative;
+    margin-top: auto;
+    padding-top: 2.4rem;
+  }
+  .cs-body::before {
+    content: '';
+    display: block;
+    width: 44px;
+    height: 2px;
+    margin-bottom: 1.1rem;
+    background: var(--accent);
+  }
+  .cs-card h3 {
+    margin: 0;
+    font-size: clamp(1.55rem, 2.4vw, 2.1rem);
+    line-height: 1.15;
+    letter-spacing: -0.01em;
+  }
+  .is-light h3 {
+    color: var(--brand-900);
+  }
+  .is-dark h3 {
+    color: var(--on-brand-strong);
+  }
+  .cs-card p {
+    margin: 0.8rem 0 0;
+    max-width: 46ch;
+    font-size: 1.04rem;
+    line-height: 1.65;
+  }
+  .is-light p {
+    color: var(--muted);
+  }
+  .is-dark p {
+    color: var(--on-brand-3);
+  }
+
+  /* Fills over one card's dwell; the slider advances when it is full. */
+  .cs-progress {
+    height: 2px;
+    margin-top: 0.6rem;
+    border-radius: 2px;
+    background: rgb(var(--brand-900-rgb) / 0.1);
+    overflow: hidden;
+  }
+  .cs-bar {
+    display: block;
+    height: 100%;
+    background: var(--accent);
+    transform: scaleX(0);
+    transform-origin: left;
+  }
+  .cs-bar.is-running {
+    animation: card-slider-fill 4.5s linear forwards;
+  }
+  .card-slider.is-paused .cs-bar {
+    animation-play-state: paused;
+  }
+  @keyframes card-slider-fill {
+    to {
+      transform: scaleX(1);
+    }
+  }
+
+  @media (max-width: 720px) {
+    .cs-card,
+    .card-slider.is-wide .cs-card {
+      flex-basis: 84vw;
+      min-height: 320px;
+    }
+  }
+
+  /* No autoplay: the arrows and a swipe still move it, instantly. */
+  @media (prefers-reduced-motion: reduce) {
+    .cs-progress,
+    .cs-pause {
+      display: none;
+    }
+    .cs-card,
+    .cs-btn {
+      transition: none;
+    }
+  }
+</style>
+
+<script>
+  const EASE_MS = 950;
+  const SETTLE_MS = 160;
+  const TOUCH_RELEASE_MS = 1500;
+
+  const ease = (t: number) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
+  const pad = (n: number) => String(n).padStart(2, '0');
+
+  function initSlider(root: HTMLElement): () => void {
+    const viewport = root.querySelector<HTMLElement>('.cs-viewport');
+    const cards = Array.from(root.querySelectorAll<HTMLElement>('.cs-card'));
+    const period = Number(root.dataset.period);
+    const count = Number(root.dataset.count);
+    if (!viewport || !period || !count || cards.length < period * 3) return () => {};
+
+    const bar = root.querySelector<HTMLElement>('.cs-bar');
+    const current = root.querySelector<HTMLElement>('.cs-current');
+    const prevBtn = root.querySelector<HTMLButtonElement>('.cs-prev');
+    const nextBtn = root.querySelector<HTMLButtonElement>('.cs-next');
+    const pauseBtn = root.querySelector<HTMLButtonElement>('.cs-pause');
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    let index = period; // the first card of the middle copy
+    let gutter = 0;
+    let anim = 0; // the running frame while easing to a card
+    let quiet = false; // true while this script, not the visitor, moved the scroll
+    let settleTimer = 0;
+    let touchTimer = 0;
+    // Every reason to hold still. Any one of them pauses the slider.
+    const holds = { user: false, hover: false, focus: false, touch: false, offscreen: true };
+
+    const measure = () => {
+      gutter = parseFloat(getComputedStyle(viewport).paddingLeft) || 0;
+    };
+    const leftOf = (i: number) => cards[i].offsetLeft - gutter;
+
+    const nearest = () => {
+      const x = viewport.scrollLeft;
+      let best = index;
+      let distance = Infinity;
+      cards.forEach((_, i) => {
+        const d = Math.abs(leftOf(i) - x);
+        if (d < distance) {
+          distance = d;
+          best = i;
+        }
+      });
+      return best;
+    };
+
+    // The scroll event for a position set in this frame arrives next frame,
+    // before that frame's callbacks run, so it still sees `quiet`.
+    const hush = () => {
+      quiet = true;
+      requestAnimationFrame(() => {
+        quiet = false;
+      });
+    };
+
+    const place = (x: number) => {
+      hush();
+      viewport.style.scrollSnapType = 'none';
+      viewport.scrollLeft = x;
+      requestAnimationFrame(() => {
+        if (!anim) viewport.style.scrollSnapType = '';
+      });
+    };
+
+    // Keeps `index` inside the middle copy by moving exactly one copy's width.
+    const normalise = () => {
+      const width = leftOf(period) - leftOf(0);
+      if (index < period) {
+        index += period;
+        place(viewport.scrollLeft + width);
+      } else if (index >= period * 2) {
+        index -= period;
+        place(viewport.scrollLeft - width);
+      }
+    };
+
+    const render = () => {
+      if (current) current.textContent = pad(((index % period) % count) + 1);
+    };
+
+    const goTo = (i: number) => {
+      cancelAnimationFrame(anim);
+      anim = 0;
+      index = Math.max(0, Math.min(cards.length - 1, i));
+      render();
+      const to = leftOf(index);
+      if (reduce) {
+        place(to);
+        normalise();
+        return;
+      }
+      const from = viewport.scrollLeft;
+      const start = performance.now();
+      viewport.style.scrollSnapType = 'none';
+      const step = (now: number) => {
+        const t = Math.min(1, (now - start) / EASE_MS);
+        hush();
+        viewport.scrollLeft = from + (to - from) * ease(t);
+        if (t < 1) {
+          anim = requestAnimationFrame(step);
+          return;
+        }
+        anim = 0;
+        viewport.style.scrollSnapType = '';
+        normalise();
+      };
+      anim = requestAnimationFrame(step);
+    };
+
+    const restartBar = () => {
+      if (!bar || reduce) return;
+      bar.classList.remove('is-running');
+      void bar.offsetWidth; // restart the animation from empty
+      bar.classList.add('is-running');
+    };
+
+    const update = () => {
+      const paused = document.hidden || Object.values(holds).some(Boolean);
+      root.classList.toggle('is-paused', paused);
+      if (pauseBtn) {
+        pauseBtn.dataset.state = holds.user ? 'paused' : 'playing';
+        pauseBtn.setAttribute('aria-label', holds.user ? 'Play the slides' : 'Pause the slides');
+      }
+    };
+
+    // Manual arrows: pick up from wherever an ease in flight had got to.
+    const step = (delta: number) => {
+      if (anim) {
+        cancelAnimationFrame(anim);
+        anim = 0;
+        normalise();
+      }
+      goTo(index + delta);
+      restartBar();
+    };
+
+    const onBarEnd = (e: AnimationEvent) => {
+      if (e.target !== bar) return;
+      goTo(index + 1);
+      restartBar();
+    };
+
+    // A swipe or trackpad scroll: once it comes to rest, adopt that card.
+    const settle = () => {
+      if (anim) return;
+      index = nearest();
+      normalise();
+      render();
+      holds.touch = false;
+      update();
+      restartBar();
+    };
+    const onScroll = () => {
+      if (quiet || anim) return;
+      clearTimeout(settleTimer);
+      settleTimer = window.setTimeout(settle, SETTLE_MS);
+    };
+
+    const onPrev = () => step(-1);
+    const onNext = () => step(1);
+    const onPause = () => {
+      holds.user = !holds.user;
+      update();
+    };
+    const onPointerEnter = (e: PointerEvent) => {
+      if (e.pointerType !== 'mouse') return;
+      holds.hover = true;
+      update();
+    };
+    const onPointerLeave = (e: PointerEvent) => {
+      if (e.pointerType !== 'mouse') return;
+      holds.hover = false;
+      update();
+    };
+    const onFocusIn = () => {
+      holds.focus = true;
+      update();
+    };
+    const onFocusOut = (e: FocusEvent) => {
+      if (root.contains(e.relatedTarget as Node | null)) return;
+      holds.focus = false;
+      update();
+    };
+    const onTouchDown = (e: PointerEvent) => {
+      if (e.pointerType === 'mouse') return;
+      cancelAnimationFrame(anim);
+      anim = 0;
+      viewport.style.scrollSnapType = '';
+      clearTimeout(touchTimer);
+      holds.touch = true;
+      update();
+    };
+    const onTouchUp = (e: PointerEvent) => {
+      if (e.pointerType === 'mouse') return;
+      // A tap never scrolls, so settle() would never release it.
+      touchTimer = window.setTimeout(() => {
+        holds.touch = false;
+        update();
+      }, TOUCH_RELEASE_MS);
+    };
+
+    prevBtn?.addEventListener('click', onPrev);
+    nextBtn?.addEventListener('click', onNext);
+    pauseBtn?.addEventListener('click', onPause);
+    bar?.addEventListener('animationend', onBarEnd);
+    viewport.addEventListener('scroll', onScroll, { passive: true });
+    viewport.addEventListener('pointerdown', onTouchDown);
+    viewport.addEventListener('pointerup', onTouchUp);
+    viewport.addEventListener('pointercancel', onTouchUp);
+    root.addEventListener('pointerenter', onPointerEnter);
+    root.addEventListener('pointerleave', onPointerLeave);
+    root.addEventListener('focusin', onFocusIn);
+    root.addEventListener('focusout', onFocusOut);
+    document.addEventListener('visibilitychange', update);
+
+    const io = new IntersectionObserver(
+      ([entry]) => {
+        holds.offscreen = !entry.isIntersecting;
+        update();
+      },
+      { threshold: 0.15 },
+    );
+    io.observe(root);
+
+    const ro = new ResizeObserver(() => {
+      measure();
+      if (!anim) place(leftOf(index));
+    });
+    ro.observe(viewport);
+
+    measure();
+    place(leftOf(index));
+    render();
+    update();
+    restartBar();
+
+    return () => {
+      cancelAnimationFrame(anim);
+      clearTimeout(settleTimer);
+      clearTimeout(touchTimer);
+      io.disconnect();
+      ro.disconnect();
+      prevBtn?.removeEventListener('click', onPrev);
+      nextBtn?.removeEventListener('click', onNext);
+      pauseBtn?.removeEventListener('click', onPause);
+      bar?.removeEventListener('animationend', onBarEnd);
+      viewport.removeEventListener('scroll', onScroll);
+      viewport.removeEventListener('pointerdown', onTouchDown);
+      viewport.removeEventListener('pointerup', onTouchUp);
+      viewport.removeEventListener('pointercancel', onTouchUp);
+      root.removeEventListener('pointerenter', onPointerEnter);
+      root.removeEventListener('pointerleave', onPointerLeave);
+      root.removeEventListener('focusin', onFocusIn);
+      root.removeEventListener('focusout', onFocusOut);
+      document.removeEventListener('visibilitychange', update);
+    };
+  }
+
+  const teardowns = Array.from(document.querySelectorAll<HTMLElement>('.card-slider')).map(initSlider);
+  // Only fires if a client side router is added; a full page load needs no teardown.
+  document.addEventListener('astro:before-swap', () => teardowns.forEach((t) => t()), { once: true });
+</script>

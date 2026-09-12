@@ -91,9 +91,11 @@ export const home: SectionSpec[] = [
       actions: [{ label: 'Read our story', href: '/about', variant: 'brand' }] satisfies Action[],
     },
   },
+  // values:slider and feature:slider are this site's own blocks, not the
+  // template's. See src/components/siteBlocks.ts.
   {
     block: 'values',
-    variant: 'cards',
+    variant: 'slider',
     props: {
       eyebrow: 'Our Promise',
       title: 'Three commitments, on our crest and in our classrooms.',
@@ -103,7 +105,7 @@ export const home: SectionSpec[] = [
   },
   {
     block: 'feature',
-    variant: 'grid',
+    variant: 'slider',
     surface: 'alt',
     props: {
       intro:
