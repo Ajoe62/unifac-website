@@ -238,7 +238,7 @@ const config = {
   shortName: 'Unifac',
   descriptor: 'Nursery, Primary & Secondary',
 
-  domain: 'unifacsch.com.ng',
+  domain: 'www.unifacsch.com.ng',
   locale: 'en',
   ogLocale: 'en_NG',
 
