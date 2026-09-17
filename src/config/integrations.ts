@@ -65,17 +65,17 @@ const config = {
       name: 'ResultPeak',
       role: "the school's assessment and results system",
       origin: `https://portal.${apexDomain}`,
-      // Not pointed at a running host yet. Until the school says otherwise the
-      // portal cards render as "opening soon" rather than walking a child into
-      // a subdomain that does not resolve.
-      live: false,
+      // Live since 2026-09-17. Both hosts are registered against Unifac's school
+      // record in ResultPeak's `schoolDomains`, which is what makes each one wear
+      // the school's crest and colours before anybody signs in.
+      live: true,
     },
     /** Lessons, summaries, practice questions and assignments. */
     jdsmartlearn: {
       name: 'JDSmartLearn',
       role: "the school's lessons and assignments platform",
       origin: `https://learn.${apexDomain}`,
-      live: false,
+      live: true,
     },
   },
 
